@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import '../Styles/Home.css'
+import ButtonLink from './ButtonLink'
 
 function Home() {
  
     return (
       <>
-      <h1>Genius-Game</h1>
-      <Link to={'/sologame'} className="buttonText">
-            Solo Mode
-        </Link>
+        <h1>Genius Game</h1>
+        <div className='GameModes'>
+        <ButtonLink buttontext='Solo Game' to='/sologame'></ButtonLink>
+        <ButtonLink buttontext="1v1" to='/sologame'></ButtonLink>
+        </div>
+        
       </>
     )
 }
