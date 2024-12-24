@@ -15,22 +15,22 @@ body {
     margin: 5px;
     border: 2px;
     cursor: pointer;
-    
+    transition: background-color 0.3s ease-in-out;
 }
-.Buttons .Red{
+.Buttons .Vermelho{
     border-top-left-radius: 50px;
     
     background-color: rgb(223, 55, 55);
 }
-.Buttons .Yellow{
+.Buttons .Amarelo{
     border-top-right-radius: 50px;
     background-color: rgb(238, 238, 34);
 }
-.Buttons .Green{
+.Buttons .Verde{
     border-bottom-left-radius: 50px;
     background-color: rgb(22, 185, 22);
 }
-.Buttons .Blue{
+.Buttons .Azul{
     border-bottom-right-radius: 50px;
     background-color: rgb(24, 165, 221);
 }

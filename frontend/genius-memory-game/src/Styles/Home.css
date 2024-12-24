@@ -6,4 +6,21 @@
     flex-wrap: wrap;
     gap: 60px;
     margin-top: 60px;
+    
+    padding-top: 20px;
+    padding-bottom: 20px;
+    
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in 0.1s forwards;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
