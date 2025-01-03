@@ -1,0 +1,74 @@
+.Auth {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    
+    border-bottom: 2px solid #ddd;
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+  }
+  
+  .Auth h1 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+  }
+  
+  .UserImg {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+  }
+  .LogOut{
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+  }
+  .Logado button{
+    background-color: #fff;
+    border: 2px solid rgb(21, 21, 21);
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .Logado{
+    display: flex;
+    flex-direction:row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    
+    margin: 10px;
+  }
+
+  .NaoLogado{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 10px;
+  }
+
+ .NaoLogado button {
+    background-color: #dbdbdb;
+    
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 2px solid rgb(147, 147, 147);
+    
+  }
+  .NaoLogado img {
+    width: 50px;
+    padding-top: 5px;
+    
+  }
