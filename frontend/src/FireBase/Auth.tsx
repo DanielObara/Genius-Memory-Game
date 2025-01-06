@@ -16,6 +16,8 @@ function Auth() {
   const handleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
+      console.log(result);
+      
       cookies.set("auth-token", result.user.refreshToken);
       cookies.set("userName", result.user.displayName);
       cookies.set("userImg", result.user.photoURL);
@@ -23,24 +25,25 @@ function Auth() {
       setIsAuth(true);
       setUserName(result.user.displayName);
       setUserImg(result.user.photoURL);
+    
     } catch (error) {
       console.log(error);
     }
   };
 
   function handleSignOut() {
-    cookies.set("auth-token", false);
-      cookies.set("userName", '');
-      cookies.set("userImg", '');
+      cookies.remove("auth-token");
+      cookies.remove("userName");
+      cookies.remove("userImg");
       setIsAuth(false);
       setUserName('');
       setUserImg('');
   }
+  console.log(userImg);
   return (
     <div className="Auth">
       {isAuth ? (
         <div className='Logado'>
-          {/* <h1>Olá {userName}</h1> */}
           <button onClick={handleSignOut}> 
             <img className='LogOut' src={LogOut}/>Sair da conta
           </button>

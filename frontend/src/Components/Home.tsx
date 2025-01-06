@@ -4,12 +4,8 @@ import ButtonLink from './ButtonLink'
 import introJs from 'intro.js';
 import 'intro.js/introjs.css';
 import Auth from '../FireBase/Auth';
-/* import Cookies from 'universal-cookie';
-
-const cookies = new Cookies() */
 
 function Home() {
-/*   const [isAuth,setIsAuth] = useState(cookies.get("auth-token")) */
 
   useEffect(() => {})
 
@@ -55,8 +51,8 @@ function Home() {
         <h1>Genius Game</h1>
         <div className='GameModes'>
         <ButtonLink buttontext="Solo Game" to="/sologame" id="Solo-Game" />
-        <ButtonLink buttontext="1v1" to="/" id="One-vs-One" />
-        <ButtonLink buttontext="Co-op" to="/" id="Co-op" />
+        <ButtonLink buttontext="1 vs 1" to="/" id="One-vs-One" />
+        <ButtonLink buttontext="Co-op" to="/co-op" id="Co-op" />
         
         </div>
         

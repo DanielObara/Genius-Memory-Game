@@ -12,12 +12,6 @@
     
   }
   
-  .Auth h1 {
-    margin: 0;
-    font-size: 20px;
-    color: #333;
-  }
-  
   .UserImg {
     width: 55px;
     height: 55px;
@@ -48,14 +42,18 @@
     align-items: center;
     width: 100%;
     
-    margin: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 5px;
   }
 
   .NaoLogado{
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 5px;
   }
 
  .NaoLogado button {
@@ -71,4 +69,33 @@
     width: 50px;
     padding-top: 5px;
     
+  }
+
+  @media (max-width: 675px) {
+    
+    .LogOut{
+      width: 20px;
+      height: 20px;
+      
+    }
+    .Logado button{
+      border: 1px solid rgb(21, 21, 21);
+    }
+    .Auth {
+      border-bottom: 1px solid #ddd;
+    }
+    .Logado{
+      display: flex;
+      flex-direction:row-reverse;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .UserImg {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ccc;
+    }
   }
