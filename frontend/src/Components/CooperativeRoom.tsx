@@ -5,6 +5,8 @@ import Cookies from "universal-cookie";
 import { db } from "../FireBase/firebase-config";
 import '../Styles/CooperativeRoom.css'
 
+import ButtonLink from "./ButtonLink";
+
 const cookies = new Cookies();
 
 function CooperativeRoom() {
@@ -21,7 +23,6 @@ function realTime() {
   const unsub = onSnapshot(doc(db, "Co-op", createRoom), (doc) => {
 
     const roomData = doc.data();
-    console.log(doc.data());
     
     setPlayersInfos({
       player1Img: roomData?.player1Img,
@@ -42,10 +43,6 @@ function realTime() {
 });
 }
   const saveRoom = async () => {
-    if (!isAuth) {
-      console.log("usuário não autenticado");
-      return;
-    }
 
     try {
       await setDoc(doc(db, "Co-op", createRoom), {
@@ -56,46 +53,36 @@ function realTime() {
         player2: "",
         player2Img:"",
         player2Choice:[],
-        gameChoice:[]
+        gameChoice:[],
+        currentPlayer: userName,
       });
       realTime()
-      console.log("Sala criada");
-      
+
     } catch (error) {
       console.error(error);
     }
   };
 
   const joinRoom = async () => {
-    if (!isAuth) {
-      console.log("usuário não autenticado");
-      return;
-    }
-
     try {
       const coopRoom = doc(db, "Co-op", createRoom);
-      //pega a sala de co-op
       const roomSnap = await getDoc(coopRoom);
-      //pega o que tem dentro da sala
-
+    
       if (roomSnap.exists()) {
-        //se a sala existe..
         const roomData = roomSnap.data();
-        console.log(roomData);
         
-        if (!roomData.player2) {
-          //se não tem ninguem como player 2
+        if (!roomData.player2) {  
           await updateDoc(coopRoom, {
             player2: userName,
             player2Img: userImg
           });
           realTime()
-          console.log("Entrou na sala como Player 2");
+
         }else{
-          console.log("sala cheia");
+          alert("sala cheia");
         }
       } else {
-        console.log("Sala não encontrada");
+        alert("Sala não encontrada");
       }
     } catch (error) {
       console.error(error);
@@ -105,6 +92,7 @@ function realTime() {
   const handleChange = (event:any) => {
     setCreateRoom(event.target.value);
   };
+
 
   return (
     <div>
@@ -133,6 +121,7 @@ function realTime() {
       ) : (
         <p>Faça login primeiro</p>
       )}
+      <ButtonLink buttontext={'Voltar'} to={'/'} id={'BackButton'}></ButtonLink>
     </div>
   );
 }
