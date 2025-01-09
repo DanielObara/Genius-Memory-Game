@@ -49,11 +49,10 @@ function realTime() {
         createdBy: userName,
         player1: userName,
         player1Img: userImg,
-        player1Choice:[],
         player2: "",
         player2Img:"",
-        player2Choice:[],
         gameChoice:[],
+        rodada:1,
         currentPlayer: userName,
       });
       realTime()
@@ -92,7 +91,6 @@ function realTime() {
   const handleChange = (event:any) => {
     setCreateRoom(event.target.value);
   };
-
 
   return (
     <div>

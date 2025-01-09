@@ -3,7 +3,7 @@ import '../Styles/SoloGame.css'
 import { useParams } from "react-router-dom";
 import incorrectButton from '../Sounds/error-8-206492.mp3'
 import correctButton from '../Sounds/new-notification-7-210334.mp3'
-import { onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../FireBase/firebase-config';
 import Cookies from "universal-cookie";
 
@@ -14,7 +14,7 @@ function CooperativeGame() {
   const coresDisponiveis = ['Vermelho', 'Amarelo', 'Verde', 'Azul'];
   const [cores, setCores] = useState<string[]>([])
   const [ultimaCor, setUltimaCor] = useState('')
-  const [escolhasDoPlayer, setEscolhasDoPlayer] = useState<string[]>([]);
+  const [escolhasDosPlayers, setEscolhasDosPlayers] = useState<string[]>([]);
   var [rodada, setRodada] = useState(1)
 
   var numeroAleatorio = Math.floor(4 * Math.random())
@@ -50,13 +50,38 @@ function CooperativeGame() {
         unsub();
       };
   }, [roomname])
+
+  const realTimeFireBase = async () => {
+    const roomRef = doc(db, "Co-op", roomname);
   
+    try {
+      const roomSnap = await getDoc(roomRef);
+        const roomData = roomSnap.data();
+        const currentGameChoice = roomData?.gameChoice;
   
+        const updatedGameChoice = currentGameChoice.concat(corSelecionada)
+        
+        await updateDoc(roomRef, {
+          gameChoice: updatedGameChoice,
+          lastColor: corSelecionada,
+        });
+        const unsub = onSnapshot(roomRef, (docSnapshot) => {
+            const roomData = docSnapshot.data();
+            setCores(roomData?.gameChoice);
+            setUltimaCor(roomData?.lastColor);
+            setRodada(roomData?.rodada);
+        });
   
-  useEffect(() => {
-    setCores(cores.concat(corSelecionada));
-    setUltimaCor(corSelecionada)
-  }, [rodada])
+        return () => unsub()
+      
+    } catch (error) {
+      console.error( error);
+    }
+  };
+
+  useEffect(() => { 
+    realTimeFireBase();
+  }, []);
 
   useEffect(() => {
     for (let i = 0; i < cores.length; i++) {
@@ -77,39 +102,41 @@ function CooperativeGame() {
  
     async function Sequencia(corEscolhidaPeloPlayer: string) {
       
-      if (userName === gameInfo.currentPlayer) {
+      /* if (userName === gameInfo.currentPlayer) {
         alert("É a sua vez");
         return;
       }else{
         alert("Não é a sua vez");
-      }
-
+      } */
+       
       const roomRef = doc(db, "Co-op", roomname);
-      const acerto = corEscolhidaPeloPlayer === cores[escolhasDoPlayer.length];
+
+      const roomSnap = await getDoc(roomRef);
+      const roomData = roomSnap.data();
+      const currentPlayerChoices = roomData?.escolhasDosPlayers || [];
+      const acerto = corEscolhidaPeloPlayer === cores[currentPlayerChoices.length];
     
       if (acerto) {
         TocarAudio(correctButton);
     
-        if (escolhasDoPlayer.length + 1 === cores.length) {
-          const novaCor = coresDisponiveis[Math.floor(4 * Math.random())];
-          const novaSequencia = [...cores, novaCor];
-    
+        if (escolhasDosPlayers.length + 1 === cores.length) {
+          //se for a ultima cor da rodada..
           await updateDoc(roomRef, {
-            cores: novaSequencia,
-            escolhasDoPlayer: [],
-            rodada: rodada + 1,
+            escolhasDosPlayers: [],
+            rodada: roomData?.rodada + 1,
           });
+          realTimeFireBase();
         } else {
+          //se não for a ultima cor da rodada e ele ter acertado..
           await updateDoc(roomRef, {
-            escolhasDoPlayer: [...escolhasDoPlayer, corEscolhidaPeloPlayer],
+            escolhasDosPlayers: [...currentPlayerChoices, corEscolhidaPeloPlayer],
           });
         }
       } else {
         TocarAudio(incorrectButton);
     
         await updateDoc(roomRef, {
-          cores: [],
-          escolhasDoPlayer: [],
+          escolhasDosPlayers: [],
           rodada: 1,
           currentPlayer: playersInfos.player1Name,
         });
