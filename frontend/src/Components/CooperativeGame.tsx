@@ -32,9 +32,15 @@ function CooperativeGame() {
   }
 
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, "Co-op", roomname), (doc) => {
-        const roomData = doc.data();
+    const unsub = onSnapshot(doc(db, "Co-op", roomname), (docSnapshot) => {
+        const roomData = docSnapshot.data();
 
+        setCores(roomData?.gameChoice || []);
+        setUltimaCor(roomData?.lastColor || '');
+        setRodada(roomData?.rodada || 1);
+        setEscolhasDosPlayers(roomData?.escolhasDosPlayers || []);
+        console.log('Atualizado no Firebase', roomData);
+        
         setPlayersInfos({
             player1Img: roomData?.player1Img,
             player2Img: roomData?.player2Img,
@@ -70,6 +76,7 @@ function CooperativeGame() {
             setCores(roomData?.gameChoice);
             setUltimaCor(roomData?.lastColor);
             setRodada(roomData?.rodada);
+            console.log("Rodada atualizada", roomData?.rodada);            
         });
   
         return () => unsub()
@@ -94,8 +101,7 @@ function CooperativeGame() {
       setTimeout(() => {
           piscarCores.style.backgroundColor = '';
       }, i * 800 + 600); 
-    }
-    
+    }    
   }, [cores])
   
     const [userName, setUserName] = useState(cookies.get("userName") );
@@ -123,9 +129,15 @@ function CooperativeGame() {
           //se for a ultima cor da rodada..
           await updateDoc(roomRef, {
             escolhasDosPlayers: [],
-            rodada: roomData?.rodada + 1,
+            rodada: (roomData?.rodada || 1) + 1,
+            // MUDAR TURNO: 
+            // currentPlayer: 
+            //   roomData?.currentPlayer === playersInfos.player1Name
+            //     ? playersInfos.player2Name
+            //     : playersInfos.player1Name,
           });
-          realTimeFireBase();
+          // TA DANDO ERRO NA RODADA A LINHA 140 SLA PQ:
+          // realTimeFireBase();
         } else {
           //se não for a ultima cor da rodada e ele ter acertado..
           await updateDoc(roomRef, {
