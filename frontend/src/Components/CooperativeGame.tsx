@@ -14,7 +14,6 @@ function CooperativeGame() {
   const coresDisponiveis = ['Vermelho', 'Amarelo', 'Verde', 'Azul'];
   const [cores, setCores] = useState<string[]>([])
   const [ultimaCor, setUltimaCor] = useState('')
-  const [escolhasDosPlayers, setEscolhasDosPlayers] = useState<string[]>([]);
   var [rodada, setRodada] = useState(1)
 
   var numeroAleatorio = Math.floor(4 * Math.random())
@@ -32,15 +31,9 @@ function CooperativeGame() {
   }
 
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, "Co-op", roomname), (docSnapshot) => {
-        const roomData = docSnapshot.data();
+    const unsub = onSnapshot(doc(db, "Co-op", roomname), (doc) => {
+        const roomData = doc.data();
 
-        setCores(roomData?.gameChoice || []);
-        setUltimaCor(roomData?.lastColor || '');
-        setRodada(roomData?.rodada || 1);
-        setEscolhasDosPlayers(roomData?.escolhasDosPlayers || []);
-        console.log('Atualizado no Firebase', roomData);
-        
         setPlayersInfos({
             player1Img: roomData?.player1Img,
             player2Img: roomData?.player2Img,
@@ -57,18 +50,15 @@ function CooperativeGame() {
       };
   }, [roomname])
 
-  const realTimeFireBase = async () => {
+   const realTimeFireBase = async () => {
     const roomRef = doc(db, "Co-op", roomname);
   
     try {
       const roomSnap = await getDoc(roomRef);
         const roomData = roomSnap.data();
-        const currentGameChoice = roomData?.gameChoice;
-  
-        const updatedGameChoice = currentGameChoice.concat(corSelecionada)
         
         await updateDoc(roomRef, {
-          gameChoice: updatedGameChoice,
+          gameChoice: roomData?.gameChoice.concat(corSelecionada),
           lastColor: corSelecionada,
         });
         const unsub = onSnapshot(roomRef, (docSnapshot) => {
@@ -76,18 +66,15 @@ function CooperativeGame() {
             setCores(roomData?.gameChoice);
             setUltimaCor(roomData?.lastColor);
             setRodada(roomData?.rodada);
-            console.log("Rodada atualizada", roomData?.rodada);            
         });
-  
-        return () => unsub()
       
     } catch (error) {
       console.error( error);
     }
   };
 
-  useEffect(() => { 
-    realTimeFireBase();
+  useEffect(() => {
+    realTimeFireBase()
   }, []);
 
   useEffect(() => {
@@ -101,22 +88,13 @@ function CooperativeGame() {
       setTimeout(() => {
           piscarCores.style.backgroundColor = '';
       }, i * 800 + 600); 
-    }    
-  }, [cores])
+    }
+  }, [rodada])
   
     const [userName, setUserName] = useState(cookies.get("userName") );
  
     async function Sequencia(corEscolhidaPeloPlayer: string) {
-      
-      /* if (userName === gameInfo.currentPlayer) {
-        alert("É a sua vez");
-        return;
-      }else{
-        alert("Não é a sua vez");
-      } */
-       
       const roomRef = doc(db, "Co-op", roomname);
-
       const roomSnap = await getDoc(roomRef);
       const roomData = roomSnap.data();
       const currentPlayerChoices = roomData?.escolhasDosPlayers || [];
@@ -124,20 +102,21 @@ function CooperativeGame() {
     
       if (acerto) {
         TocarAudio(correctButton);
-    
-        if (escolhasDosPlayers.length + 1 === cores.length) {
-          //se for a ultima cor da rodada..
+
+        // tava errado aqui
+        if (currentPlayerChoices.length + 1 === cores.length) {
           await updateDoc(roomRef, {
             escolhasDosPlayers: [],
-            rodada: (roomData?.rodada || 1) + 1,
+            rodada: roomData?.rodada + 1,
+            gameChoice: [...roomData?.gameChoice, corSelecionada],
+            lastColor: corSelecionada,
             // MUDAR TURNO: 
             // currentPlayer: 
             //   roomData?.currentPlayer === playersInfos.player1Name
             //     ? playersInfos.player2Name
             //     : playersInfos.player1Name,
           });
-          // TA DANDO ERRO NA RODADA A LINHA 140 SLA PQ:
-          // realTimeFireBase();
+          
         } else {
           //se não for a ultima cor da rodada e ele ter acertado..
           await updateDoc(roomRef, {
@@ -150,6 +129,8 @@ function CooperativeGame() {
         await updateDoc(roomRef, {
           escolhasDosPlayers: [],
           rodada: 1,
+          gameChoice: [corSelecionada],
+          lastColor: corSelecionada,
           currentPlayer: playersInfos.player1Name,
         });
       }
