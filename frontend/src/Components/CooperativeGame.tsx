@@ -117,6 +117,9 @@ function CooperativeGame() {
             //     : playersInfos.player1Name,
           });
           
+
+
+          
         } else {
           //se não for a ultima cor da rodada e ele ter acertado..
           await updateDoc(roomRef, {
