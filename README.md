@@ -52,3 +52,11 @@ npm run dev
 1. Enter a room name to create or join a multiplayer session.
 2. Players take turns repeating the sequence.
 3. Work together to complete the sequence and advance to the next round.
+
+## Acknowledgments
+- Inspired by the classic "Simon" game.
+- [@DanielObara](https://github.com/DanielObara) for mentoring during development.
+
+This project was developed by:
+- [@ArtHirche](https://github.com/ArtHirche).
+- [Edugiyuu](https://github.com/Edugiyuu).
