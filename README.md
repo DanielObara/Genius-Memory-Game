@@ -59,4 +59,4 @@ npm run dev
 
 This project was developed by:
 - [@ArtHirche](https://github.com/ArtHirche).
-- [Edugiyuu](https://github.com/Edugiyuu).
+- [@Edugiyuu](https://github.com/Edugiyuu).
