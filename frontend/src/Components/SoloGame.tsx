@@ -4,11 +4,11 @@ import incorrectButton from '../Sounds/error-8-206492.mp3'
 import correctButton from '../Sounds/new-notification-7-210334.mp3'
 import ButtonLink from './ButtonLink'
 
-export function TocarAudio(audio:string) {
+export function TocarAudio(audio: string) {
   new Audio(audio).play()
 }
 
-function SoloGame() {
+const SoloGame = () => {
 
   const coresDisponiveis = ['Vermelho', 'Amarelo', 'Verde', 'Azul'];
   const [cores, setCores] = useState<string[]>([])
@@ -23,23 +23,23 @@ function SoloGame() {
     setCores(cores.concat(corSelecionada));
     setUltimaCor(corSelecionada)
   }, [rodada])
-  
+
   useEffect(() => {
     for (let i = 0; i < cores.length; i++) {
       const piscarCores = document.querySelector<HTMLButtonElement>(`.${cores[i]}`)!;
-      
+
       setTimeout(() => {
         piscarCores.style.backgroundColor = 'rgb(240, 240, 240)';
-      }, i* 800);
-  
+      }, i * 800);
+
       setTimeout(() => {
-          piscarCores.style.backgroundColor = '';
-      }, i * 800 + 600); 
+        piscarCores.style.backgroundColor = '';
+      }, i * 800 + 600);
     }
-    
+
   }, [cores])
-  
-  function Sequencia(corEscolhidaPeloPlayer: string) {
+
+  const Sequencia = async (corEscolhidaPeloPlayer: string) => {
     setEscolhasDoPlayer(escolhasDoPlayer.concat(corEscolhidaPeloPlayer));
     const acerto = corEscolhidaPeloPlayer === cores[escolhasDoPlayer.length];
     // ex: a sequencia é [ "Vermelho", "Azul", "Azul"]
@@ -49,7 +49,7 @@ function SoloGame() {
 
     // se o jogador já escolheu a primeira cor a segunda seria:
     // corEscolhidaPeloPlayer === cores[1] que seria "Azul"
-    
+
 
     if (acerto) {
       TocarAudio(correctButton)
@@ -58,7 +58,7 @@ function SoloGame() {
       setTimeout(() => {
         document.body.style.backgroundColor = '';
       }, 220);
-      
+
       if (escolhasDoPlayer.length + 1 === cores.length) {
         //aqui precisa do + 1 já que estado escolhasDoPlayer ainda não foi atualizado (não me pergunte o porque)
         setRodada(rodada + 1);
@@ -70,8 +70,8 @@ function SoloGame() {
       setTimeout(() => {
         document.body.style.backgroundColor = '';
       }, 220);
-      
-      
+
+
       if (rodada !== 1) {
         setRodada(1)
         setCores([])

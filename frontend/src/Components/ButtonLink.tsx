@@ -6,7 +6,7 @@ interface Button {
   id:string
 }
 
-function ButtonLink({ buttontext,to ,id}: Button) {
+const ButtonLink = ({ buttontext,to ,id}: Button) => {
   return (
     <div>
       <Link to={to} id={id} className="Link">
