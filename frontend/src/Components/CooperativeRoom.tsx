@@ -1,11 +1,16 @@
 import { doc, setDoc, updateDoc, getDoc, onSnapshot } from "firebase/firestore";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { db } from "../FireBase/firebase-config";
 import '../Styles/CooperativeRoom.css'
 
 import ButtonLink from "./ButtonLink";
+
+interface PlayerInfos {
+  player1Img: string;
+  player2Img: string;
+}
 
 const cookies = new Cookies();
 
@@ -14,10 +19,10 @@ const CooperativeRoom = () => {
   const [userName] = useState(cookies.get("userName"));
   const [userImg] = useState(cookies.get("userImg"));
 
-  const [createRoom, setCreateRoom] = useState("");
+  const [createRoom, setCreateRoom] = useState<string>('');
   const navigate = useNavigate();
 
-  const [playersInfos, setPlayersInfos] = useState({ player1Img: '', player2Img: '' });
+  const [playersInfos, setPlayersInfos] = useState<PlayerInfos>({ player1Img: '', player2Img: '' });
 
   const realTime = () => {
     const unsub = onSnapshot(doc(db, "Co-op", createRoom), (doc) => {
@@ -52,7 +57,7 @@ const CooperativeRoom = () => {
         player2: "",
         player2Img: "",
         gameChoice: [],
-        rodada: 1,
+        round: 1,
         currentPlayer: userName,
       });
       realTime()
@@ -88,7 +93,7 @@ const CooperativeRoom = () => {
     }
   };
 
-  const handleChange = (event: any) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCreateRoom(event.target.value);
   };
 

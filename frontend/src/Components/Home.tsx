@@ -7,8 +7,6 @@ import Auth from '../FireBase/Auth';
 
 const Home = () => {
 
-  useEffect(() => { })
-
   useEffect(() => {
     introJs().setOptions({
       steps: [

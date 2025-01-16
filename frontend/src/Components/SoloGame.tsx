@@ -1,92 +1,96 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+//coisas do eslint
 import { useEffect, useState } from 'react'
 import '../Styles/SoloGame.css'
 import incorrectButton from '../Sounds/error-8-206492.mp3'
 import correctButton from '../Sounds/new-notification-7-210334.mp3'
 import ButtonLink from './ButtonLink'
 
-export function TocarAudio(audio: string) {
+export function PlayAudio(audio: string) {
   new Audio(audio).play()
 }
 
+interface SoloGameState {
+  gameColorChoices: string[];
+  playerChoices: string[];
+  round: number;
+}
+
 const SoloGame = () => {
+  const availableColors = ['Vermelho', 'Amarelo', 'Verde', 'Azul'];
+  const [gameColorChoices, setGameColorChoices] = useState<SoloGameState['gameColorChoices']>([]);
+  const [playerChoices, setPlayerChoices] = useState<SoloGameState['playerChoices']>([]);
+  const [round, setRound] = useState<SoloGameState['round']>(1);
 
-  const coresDisponiveis = ['Vermelho', 'Amarelo', 'Verde', 'Azul'];
-  const [cores, setCores] = useState<string[]>([])
-  const [ultimaCor, setUltimaCor] = useState('')
-  const [escolhasDoPlayer, setEscolhasDoPlayer] = useState<string[]>([]);
-  var [rodada, setRodada] = useState(1)
-
-  var numeroAleatorio = Math.floor(4 * Math.random())
-  const corSelecionada = coresDisponiveis[numeroAleatorio];
+  const randomNumber = Math.floor(4 * Math.random())
+  const selectedColor = availableColors[randomNumber];
 
   useEffect(() => {
-    setCores(cores.concat(corSelecionada));
-    setUltimaCor(corSelecionada)
-  }, [rodada])
+    setGameColorChoices(gameColorChoices.concat(selectedColor));
+  }, [round])
 
   useEffect(() => {
-    for (let i = 0; i < cores.length; i++) {
-      const piscarCores = document.querySelector<HTMLButtonElement>(`.${cores[i]}`)!;
+    for (let i = 0; i < gameColorChoices.length; i++) {
+      const flashButtonColors = document.querySelector<HTMLButtonElement>(`.${gameColorChoices[i]}`)!;
 
       setTimeout(() => {
-        piscarCores.style.backgroundColor = 'rgb(240, 240, 240)';
-      }, i * 800);
+        flashButtonColors.style.backgroundColor = 'rgb(240, 240, 240)';
+      }, i * 750);
 
       setTimeout(() => {
-        piscarCores.style.backgroundColor = '';
-      }, i * 800 + 600);
+        flashButtonColors.style.backgroundColor = '';
+      }, i * 750 + 600);
     }
 
-  }, [cores])
+  }, [gameColorChoices])
 
   const Sequencia = async (corEscolhidaPeloPlayer: string) => {
-    setEscolhasDoPlayer(escolhasDoPlayer.concat(corEscolhidaPeloPlayer));
-    const acerto = corEscolhidaPeloPlayer === cores[escolhasDoPlayer.length];
+    setPlayerChoices(playerChoices.concat(corEscolhidaPeloPlayer));
+    const correctColor = corEscolhidaPeloPlayer === gameColorChoices[playerChoices.length];
     // ex: a sequencia é [ "Vermelho", "Azul", "Azul"]
-    // cores[0] é "Vermelho"
-    // cores[1] é "Azul"
-    // cores[2] é "Azul" 
+    // gameColorChoices[0] é "Vermelho"
+    // gameColorChoices[1] é "Azul"
+    // gameColorChoices[2] é "Azul" 
 
     // se o jogador já escolheu a primeira cor a segunda seria:
-    // corEscolhidaPeloPlayer === cores[1] que seria "Azul"
+    // corEscolhidaPeloPlayer === gameColorChoices[1] que seria "Azul"
 
 
-    if (acerto) {
-      TocarAudio(correctButton)
+    if (correctColor) {
+      PlayAudio(correctButton)
 
       document.body.style.backgroundColor = 'rgb(44, 245, 44)';
       setTimeout(() => {
         document.body.style.backgroundColor = '';
       }, 220);
 
-      if (escolhasDoPlayer.length + 1 === cores.length) {
-        //aqui precisa do + 1 já que estado escolhasDoPlayer ainda não foi atualizado (não me pergunte o porque)
-        setRodada(rodada + 1);
-        setEscolhasDoPlayer([]);
+      if (playerChoices.length + 1 === gameColorChoices.length) {
+        //aqui precisa do + 1 já que estado playerChoices ainda não foi atualizado (não me pergunte o porque)
+        setRound(round + 1);
+        setPlayerChoices([]);
       }
     } else {
-      TocarAudio(incorrectButton)
+      PlayAudio(incorrectButton)
       document.body.style.backgroundColor = 'red';
       setTimeout(() => {
         document.body.style.backgroundColor = '';
       }, 220);
 
 
-      if (rodada !== 1) {
-        setRodada(1)
-        setCores([])
-        setEscolhasDoPlayer([])
+      if (round !== 1) {
+        setRound(1)
+        setGameColorChoices([])
+        setPlayerChoices([])
       } else {
-        setRodada(1)
-        setCores([cores[0]])
-        setEscolhasDoPlayer([])
+        setRound(1)
+        setGameColorChoices([gameColorChoices[0]])
+        setPlayerChoices([])
       }
     }
   }
   return (
     <>
-      <h1>Rodada {rodada}</h1>
-      <h2>Cor da rodada: {ultimaCor}</h2>
+      <h1>Rodada {round}</h1>
       <div className="Buttons">
         <button className='Vermelho' onClick={() => { Sequencia('Vermelho') }}>Vermelho</button>
         <button className='Amarelo' onClick={() => { Sequencia('Amarelo') }}>Amarelo</button>
