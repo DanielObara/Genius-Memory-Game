@@ -1,0 +1,39 @@
+{
+	"name": "genius-memory-game",
+	"version": "1.0.0",
+	"description": "A memory game like a Simon",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"format": "prettier --write .",
+		"prepare": "husky",
+		"lint": "eslint ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/DanielObara/Genius-Memory-Game.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/DanielObara/Genius-Memory-Game/issues"
+	},
+	"homepage": "https://github.com/DanielObara/Genius-Memory-Game#readme",
+	"devDependencies": {
+		"@commitlint/cli": "^19.6.1",
+		"@commitlint/config-conventional": "^19.6.0",
+		"@eslint/eslintrc": "^3.2.0",
+		"@eslint/js": "^9.18.0",
+		"eslint": "^9.18.0",
+		"globals": "^15.14.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^15.3.0",
+		"prettier": "^3.4.2"
+	},
+	"lint-staged": {
+		"*.js": [
+			"eslint --fix",
+			"prettier --write"
+		]
+	}
+}
