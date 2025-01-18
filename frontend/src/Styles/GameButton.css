@@ -17,20 +17,20 @@ body {
     cursor: pointer;
     transition: background-color 0.3s ease-in-out;
 }
-.Buttons .Vermelho{
+.Buttons .Red{
     border-top-left-radius: 50px;
     
     background-color: rgb(223, 55, 55);
 }
-.Buttons .Amarelo{
+.Buttons .Yellow{
     border-top-right-radius: 50px;
     background-color: rgb(238, 238, 34);
 }
-.Buttons .Verde{
+.Buttons .Green{
     border-bottom-left-radius: 50px;
     background-color: rgb(22, 185, 22);
 }
-.Buttons .Azul{
+.Buttons .Blue{
     border-bottom-right-radius: 50px;
     background-color: rgb(24, 165, 221);
 }

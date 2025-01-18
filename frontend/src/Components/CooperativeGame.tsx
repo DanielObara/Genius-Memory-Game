@@ -2,14 +2,14 @@
 /* eslint-disable no-unsafe-optional-chaining */
 //coisas do eslint
 import { useEffect, useState } from 'react'
-import '../Styles/SoloGame.css'
 import { useParams } from "react-router-dom";
 import incorrectButton from '../Sounds/error-8-206492.mp3'
 import correctButton from '../Sounds/new-notification-7-210334.mp3'
 import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../FireBase/firebase-config';
-import Cookies from "universal-cookie";
-import { PlayAudio } from './SoloGame';
+import { PlayAudio } from '../Utils/PlayAudio';
+import Cookies from 'universal-cookie';
+import { ChangeTurn } from '../Utils/ChangeTurn';
 
 const cookies = new Cookies();
 
@@ -18,18 +18,17 @@ type RoomParams = {
 };
 
 const CooperativeGame = () => {
+  const [userName] = useState(cookies.get("userName"));
 
-  const coresDisponiveis = ['Vermelho', 'Amarelo', 'Verde', 'Azul'];
-  const [availableColors, setAvailableColors] = useState<string[]>([])
-  const [ultimaCor, setUltimaCor] = useState('')
+  const availableColors = ['Red', 'Yellow', 'Green', 'Blue'];
+  const [gameChoices, setGameChoices] = useState<string[]>([])
   const [round, setRodada] = useState(1)
 
   const numeroAleatorio = Math.floor(4 * Math.random())
-  const corSelecionada = coresDisponiveis[numeroAleatorio];
+  const corSelecionada = availableColors[numeroAleatorio];
   //--------------------------------------------------------------------------------------
   const [playersInfos, setPlayersInfos] = useState({ player1Img: '', player2Img: '', player1Name: '', player2Name: '' });
-
-  /* const [gameInfo, setGameInfo] = useState({currentPlayer: ''}); */
+  const [currentPlayer, setCurrentPlayer] = useState<string>('');
 
   const { roomname } = useParams<RoomParams>();
 
@@ -45,10 +44,6 @@ const CooperativeGame = () => {
         player1Name: roomData?.player1,
         player2Name: roomData?.player2
       })
-      //vamos usar isso e a linha 31 depois 
-      /* setGameInfo({
-        currentPlayer: roomData?.currentPlayer
-      }) */
     });
 
     return () => {
@@ -70,9 +65,9 @@ const CooperativeGame = () => {
       });
       onSnapshot(roomRef, (docSnapshot) => {
         const roomData = docSnapshot.data();
-       setAvailableColors(roomData?.gameChoice);
-        setUltimaCor(roomData?.lastColor);
+       setGameChoices(roomData?.gameChoice);
         setRodada(roomData?.round);
+        setCurrentPlayer(roomData?.currentPlayer);
       });
 
     } catch (error) {
@@ -85,46 +80,46 @@ const CooperativeGame = () => {
   }, []);
 
   useEffect(() => {
-    for (let i = 0; i < availableColors.length; i++) {
-      const piscarCores = document.querySelector<HTMLButtonElement>(`.${availableColors[i]}`)!;
+    for (let i = 0; i < gameChoices.length; i++) {
+      const piscarCores = document.querySelector<HTMLButtonElement>(`.${gameChoices[i]}`)!;
 
       setTimeout(() => {
         piscarCores.style.backgroundColor = 'rgb(240, 240, 240)';
-      }, i * 800);
+      }, i * 750);
 
       setTimeout(() => {
         piscarCores.style.backgroundColor = '';
-      }, i * 800 + 600);
+      }, i * 750 + 600);
     }
   }, [round])
 
-  const [userName] = useState(cookies.get("userName"));
-
-  /* async function Sequencia(corEscolhidaPeloPlayer: string) { */
   const Sequencia = async (corEscolhidaPeloPlayer: string) => {
+
+    if (userName !== currentPlayer) {
+      alert('Aguarde a sua vez')
+      return;
+    }
+
     if (!roomname) return;
     const roomRef = doc(db, "Co-op", roomname);
     const roomSnap = await getDoc(roomRef);
     const roomData = roomSnap.data();
     const currentPlayerChoices = roomData?.escolhasDosPlayers || [];
-    const acerto = corEscolhidaPeloPlayer === availableColors[currentPlayerChoices.length];
+    const correctColor = corEscolhidaPeloPlayer === gameChoices[currentPlayerChoices.length];
 
-    if (acerto) {
+    if (correctColor) {
       PlayAudio(correctButton);
 
-      if (currentPlayerChoices.length + 1 === availableColors.length) {
+      if (currentPlayerChoices.length + 1 === gameChoices.length) {
+
         await updateDoc(roomRef, {
           escolhasDosPlayers: [],
           round: roomData?.round + 1,
           gameChoice: [...roomData?.gameChoice, corSelecionada],
           lastColor: corSelecionada,
-          // MUDAR TURNO: 
-          // currentPlayer: 
-          //   roomData?.currentPlayer === playersInfos.player1Name
-          //     ? playersInfos.player2Name
-          //     : playersInfos.player1Name,
         });
-
+        
+        ChangeTurn(roomname, 'Co-op');
 
       } else {
         //se não for a ultima cor da round e ele ter acertado..
@@ -145,21 +140,20 @@ const CooperativeGame = () => {
     }
   }
 
-
   return (
     <>
       <h1>Rodada {round}</h1>
-      <h2>Turno do Player {userName}</h2>
-      <h2>Cor da round: {ultimaCor}</h2>
+      <h2>Turno do Player: {currentPlayer}</h2>
       {playersInfos.player1Img && <img src={playersInfos.player1Img} />}
       {playersInfos.player2Img && <img src={playersInfos.player2Img} />}
+      
       <div className="Buttons">
-        <button className='Vermelho' onClick={() => { Sequencia('Vermelho') }}>Vermelho</button>
-        <button className='Amarelo' onClick={() => { Sequencia('Amarelo') }}>Amarelo</button>
+        <button className='Red' onClick={() => { Sequencia('Red') }}>Red</button>
+        <button className='Yellow' onClick={() => { Sequencia('Yellow') }}>Yellow</button>
       </div>
       <div className="Buttons">
-        <button className='Verde' onClick={() => { Sequencia('Verde') }}>Verde</button>
-        <button className='Azul' onClick={() => { Sequencia('Azul') }}>Azul</button>
+        <button className='Green' onClick={() => { Sequencia('Green') }}>Green</button>
+        <button className='Blue' onClick={() => { Sequencia('Blue') }}>Blue</button>
       </div>
 
     </>

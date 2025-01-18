@@ -1,14 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-//coisas do eslint
 import { useEffect, useState } from 'react'
-import '../Styles/SoloGame.css'
 import incorrectButton from '../Sounds/error-8-206492.mp3'
 import correctButton from '../Sounds/new-notification-7-210334.mp3'
 import ButtonLink from './ButtonLink'
-
-export function PlayAudio(audio: string) {
-  new Audio(audio).play()
-}
+import { PlayAudio } from "../Utils/PlayAudio";
 
 interface SoloGameState {
   gameColorChoices: string[];
@@ -17,7 +11,7 @@ interface SoloGameState {
 }
 
 const SoloGame = () => {
-  const availableColors = ['Vermelho', 'Amarelo', 'Verde', 'Azul'];
+  const availableColors = ['Red', 'Yellow', 'Green', 'Blue'];
   const [gameColorChoices, setGameColorChoices] = useState<SoloGameState['gameColorChoices']>([]);
   const [playerChoices, setPlayerChoices] = useState<SoloGameState['playerChoices']>([]);
   const [round, setRound] = useState<SoloGameState['round']>(1);
@@ -47,13 +41,13 @@ const SoloGame = () => {
   const Sequencia = async (corEscolhidaPeloPlayer: string) => {
     setPlayerChoices(playerChoices.concat(corEscolhidaPeloPlayer));
     const correctColor = corEscolhidaPeloPlayer === gameColorChoices[playerChoices.length];
-    // ex: a sequencia é [ "Vermelho", "Azul", "Azul"]
-    // gameColorChoices[0] é "Vermelho"
-    // gameColorChoices[1] é "Azul"
-    // gameColorChoices[2] é "Azul" 
+    // ex: a sequencia é [ "Red", "Blue", "Blue"]
+    // gameColorChoices[0] é "Red"
+    // gameColorChoices[1] é "Blue"
+    // gameColorChoices[2] é "Blue" 
 
     // se o jogador já escolheu a primeira cor a segunda seria:
-    // corEscolhidaPeloPlayer === gameColorChoices[1] que seria "Azul"
+    // corEscolhidaPeloPlayer === gameColorChoices[1] que seria "Blue"
 
 
     if (correctColor) {
@@ -92,12 +86,12 @@ const SoloGame = () => {
     <>
       <h1>Rodada {round}</h1>
       <div className="Buttons">
-        <button className='Vermelho' onClick={() => { Sequencia('Vermelho') }}>Vermelho</button>
-        <button className='Amarelo' onClick={() => { Sequencia('Amarelo') }}>Amarelo</button>
+        <button className='Red' onClick={() => { Sequencia('Red') }}>Red</button>
+        <button className='Yellow' onClick={() => { Sequencia('Yellow') }}>Yellow</button>
       </div>
       <div className="Buttons">
-        <button className='Verde' onClick={() => { Sequencia('Verde') }}>Verde</button>
-        <button className='Azul' onClick={() => { Sequencia('Azul') }}>Azul</button>
+        <button className='Green' onClick={() => { Sequencia('Green') }}>Green</button>
+        <button className='Blue' onClick={() => { Sequencia('Blue') }}>Blue</button>
       </div>
       <ButtonLink buttontext={'Voltar'} to={'/'} id={'BackButton'}></ButtonLink>
     </>
