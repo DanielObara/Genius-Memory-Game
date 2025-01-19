@@ -1,0 +1,36 @@
+.Link {
+    display: inline-block;
+    padding: 15px 25px;
+    font-size: 1.2rem;
+    color: white;
+    background-color: #21d421;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    width: 100px;
+    text-align: center;
+}
+
+
+.Link:hover {
+    background-color: #1cb81c;
+    animation: pulse 1s;
+}
+
+#BackButton{
+    margin-top: 60px;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 #1cb81c;
+    }
+    70% {
+        box-shadow: 0 0 0 50px rgba(33, 212, 33, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(33, 212, 33, 0);
+    }
+}
