@@ -10,7 +10,6 @@ const cookies = new Cookies();
 
 function Auth() {
   const [isAuth, setIsAuth] = useState(cookies.get("auth-token"));
-  const [userName, setUserName] = useState(cookies.get("userName"));
   const [userImg, setUserImg] = useState(cookies.get("userImg"));
 
   const handleSignIn = async () => {
@@ -23,7 +22,6 @@ function Auth() {
       cookies.set("userImg", result.user.photoURL);
 
       setIsAuth(true);
-      setUserName(result.user.displayName);
       setUserImg(result.user.photoURL);
 
     } catch (error) {
@@ -36,7 +34,6 @@ function Auth() {
     cookies.remove("userName");
     cookies.remove("userImg");
     setIsAuth(false);
-    setUserName('');
     setUserImg('');
   }
   console.log(userImg);
