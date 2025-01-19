@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
-import incorrectButton from '../Sounds/error-8-206492.mp3'
-import correctButton from '../Sounds/new-notification-7-210334.mp3'
 import ButtonLink from './ButtonLink'
-import { PlayAudio } from "../Utils/PlayAudio";
+import { BackgroundColor } from '../Utils/BackgroundColor';
 
 interface SoloGameState {
   gameColorChoices: string[];
@@ -51,12 +49,7 @@ const SoloGame = () => {
 
 
     if (correctColor) {
-      PlayAudio(correctButton)
-
-      document.body.style.backgroundColor = 'rgb(44, 245, 44)';
-      setTimeout(() => {
-        document.body.style.backgroundColor = '';
-      }, 220);
+      BackgroundColor(true)
 
       if (playerChoices.length + 1 === gameColorChoices.length) {
         //aqui precisa do + 1 já que estado playerChoices ainda não foi atualizado (não me pergunte o porque)
@@ -64,12 +57,7 @@ const SoloGame = () => {
         setPlayerChoices([]);
       }
     } else {
-      PlayAudio(incorrectButton)
-      document.body.style.backgroundColor = 'red';
-      setTimeout(() => {
-        document.body.style.backgroundColor = '';
-      }, 220);
-
+      BackgroundColor(false)
 
       if (round !== 1) {
         setRound(1)

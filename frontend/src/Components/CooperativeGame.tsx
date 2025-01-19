@@ -3,13 +3,11 @@
 //coisas do eslint
 import { useEffect, useState } from 'react'
 import { useParams } from "react-router-dom";
-import incorrectButton from '../Sounds/error-8-206492.mp3'
-import correctButton from '../Sounds/new-notification-7-210334.mp3'
 import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../FireBase/firebase-config';
-import { PlayAudio } from '../Utils/PlayAudio';
 import Cookies from 'universal-cookie';
 import { ChangeTurn } from '../Utils/ChangeTurn';
+import { BackgroundColor } from '../Utils/BackgroundColor';
 
 const cookies = new Cookies();
 
@@ -61,7 +59,6 @@ const CooperativeGame = () => {
 
       await updateDoc(roomRef, {
         gameChoice: roomData?.gameChoice.concat(corSelecionada),
-        lastColor: corSelecionada,
       });
       onSnapshot(roomRef, (docSnapshot) => {
         const roomData = docSnapshot.data();
@@ -108,15 +105,13 @@ const CooperativeGame = () => {
     const correctColor = corEscolhidaPeloPlayer === gameChoices[currentPlayerChoices.length];
 
     if (correctColor) {
-      PlayAudio(correctButton);
+      BackgroundColor(true)
 
       if (currentPlayerChoices.length + 1 === gameChoices.length) {
-
         await updateDoc(roomRef, {
           escolhasDosPlayers: [],
           round: roomData?.round + 1,
           gameChoice: [...roomData?.gameChoice, corSelecionada],
-          lastColor: corSelecionada,
         });
         
         ChangeTurn(roomname, 'Co-op');
@@ -128,13 +123,12 @@ const CooperativeGame = () => {
         });
       }
     } else {
-      PlayAudio(incorrectButton);
+      BackgroundColor(false)
 
       await updateDoc(roomRef, {
         escolhasDosPlayers: [],
         round: 1,
         gameChoice: [corSelecionada],
-        lastColor: corSelecionada,
         currentPlayer: playersInfos.player1Name,
       });
     }
