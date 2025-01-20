@@ -1,6 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unsafe-optional-chaining */
-//coisas do eslint
 import { useEffect, useState } from 'react'
 import { useParams } from "react-router-dom";
 import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
@@ -32,7 +29,7 @@ const CooperativeGame = () => {
 
   useEffect(() => {
     if (!roomname) return;
-    //verifica se o roomname é valido
+    //checks if the roomname is valid
     const unsub = onSnapshot(doc(db, "Co-op", roomname), (doc) => {
       const roomData = doc.data();
 
@@ -71,7 +68,6 @@ const CooperativeGame = () => {
       console.error(error);
     }
   };
-
   useEffect(() => {
     realTimeFireBase()
   }, []);
@@ -111,13 +107,12 @@ const CooperativeGame = () => {
         await updateDoc(roomRef, {
           escolhasDosPlayers: [],
           round: roomData?.round + 1,
-          gameChoice: [...roomData?.gameChoice, corSelecionada],
+          gameChoice: roomData?.gameChoice.concat(corSelecionada),
         });
         
         ChangeTurn(roomname, 'Co-op');
 
       } else {
-        //se não for a ultima cor da round e ele ter acertado..
         await updateDoc(roomRef, {
           escolhasDosPlayers: [...currentPlayerChoices, corEscolhidaPeloPlayer],
         });

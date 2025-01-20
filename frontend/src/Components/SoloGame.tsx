@@ -39,20 +39,19 @@ const SoloGame = () => {
   const Sequencia = async (corEscolhidaPeloPlayer: string) => {
     setPlayerChoices(playerChoices.concat(corEscolhidaPeloPlayer));
     const correctColor = corEscolhidaPeloPlayer === gameColorChoices[playerChoices.length];
-    // ex: a sequencia é [ "Red", "Blue", "Blue"]
-    // gameColorChoices[0] é "Red"
-    // gameColorChoices[1] é "Blue"
-    // gameColorChoices[2] é "Blue" 
+    // ex: the sequence is [ "Red", "Blue", "Blue"]
+    // gameColorChoices[0] is "Red"
+    // gameColorChoices[1] is "Blue"
+    // gameColorChoices[2] is "Blue" 
 
-    // se o jogador já escolheu a primeira cor a segunda seria:
-    // corEscolhidaPeloPlayer === gameColorChoices[1] que seria "Blue"
+    // If the player has already chosen the first color, the second would be:
+    // corEscolhidaPeloPlayer === gameColorChoices[1] that would be "Blue"
 
 
     if (correctColor) {
       BackgroundColor(true)
 
       if (playerChoices.length + 1 === gameColorChoices.length) {
-        //aqui precisa do + 1 já que estado playerChoices ainda não foi atualizado (não me pergunte o porque)
         setRound(round + 1);
         setPlayerChoices([]);
       }
