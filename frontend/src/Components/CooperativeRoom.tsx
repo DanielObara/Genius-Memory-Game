@@ -12,6 +12,13 @@ interface PlayerInfos {
   player2Img: string;
 }
 
+type RoomData = {
+  player1: string;
+  player1Img: string;
+  player2: string;
+  player2Img: string;
+}
+
 const cookies = new Cookies();
 
 const CooperativeRoom = () => {
@@ -27,7 +34,7 @@ const CooperativeRoom = () => {
   const realTime = () => {
     const unsub = onSnapshot(doc(db, "Co-op", createRoom), (doc) => {
 
-      const roomData = doc.data();
+      const roomData = doc.data() as RoomData;
 
       setPlayersInfos({
         player1Img: roomData?.player1Img,
@@ -73,7 +80,7 @@ const CooperativeRoom = () => {
       const roomSnap = await getDoc(coopRoom);
 
       if (roomSnap.exists()) {
-        const roomData = roomSnap.data();
+        const roomData = roomSnap.data() as RoomData;
 
         if (!roomData.player2) {
           await updateDoc(coopRoom, {

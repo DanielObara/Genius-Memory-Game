@@ -18,7 +18,7 @@ const SoloGame = () => {
   const selectedColor = availableColors[randomNumber];
 
   useEffect(() => {
-    setGameColorChoices(gameColorChoices.concat(selectedColor));
+    setGameColorChoices((prevChoices) => [...prevChoices, selectedColor]);
   }, [round])
 
   useEffect(() => {

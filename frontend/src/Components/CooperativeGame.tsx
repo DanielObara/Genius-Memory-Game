@@ -12,6 +12,25 @@ type RoomParams = {
   roomname: string;
 };
 
+type RoomData = {
+  playersChoices: string[];
+  createdBy: string
+  currentPlayer: string;
+  gameChoice: string[];
+  player1: string;
+  player1Img: string;
+  player2: string;
+  player2Img: string;
+  round: number;
+};
+
+type PlayersInfos = {
+  player1Name: string;
+  player1Img: string;
+  player2Name: string;
+  player2Img: string;
+};
+
 const CooperativeGame = () => {
   const [userName] = useState(cookies.get("userName"));
 
@@ -22,7 +41,7 @@ const CooperativeGame = () => {
   const numeroAleatorio = Math.floor(4 * Math.random())
   const corSelecionada = availableColors[numeroAleatorio];
   //--------------------------------------------------------------------------------------
-  const [playersInfos, setPlayersInfos] = useState({ player1Img: '', player2Img: '', player1Name: '', player2Name: '' });
+  const [playersInfos, setPlayersInfos] = useState<PlayersInfos>({ player1Img: '', player2Img: '', player1Name: '', player2Name: '' });
   const [currentPlayer, setCurrentPlayer] = useState<string>('');
 
   const { roomname } = useParams<RoomParams>();
@@ -31,7 +50,7 @@ const CooperativeGame = () => {
     if (!roomname) return;
     //checks if the roomname is valid
     const unsub = onSnapshot(doc(db, "Co-op", roomname), (doc) => {
-      const roomData = doc.data();
+      const roomData = doc.data() as RoomData;
 
       setPlayersInfos({
         player1Img: roomData?.player1Img,
@@ -46,7 +65,7 @@ const CooperativeGame = () => {
     };
   }, [roomname])
 
-  const realTimeFireBase = async () => {
+  const initializeRealTimeUpdates = async () => {
     if (!roomname) return;
     const roomRef = doc(db, "Co-op", roomname);
 
@@ -68,8 +87,9 @@ const CooperativeGame = () => {
       console.error(error);
     }
   };
+  
   useEffect(() => {
-    realTimeFireBase()
+    initializeRealTimeUpdates()
   }, []);
 
   useEffect(() => {
@@ -97,7 +117,7 @@ const CooperativeGame = () => {
     const roomRef = doc(db, "Co-op", roomname);
     const roomSnap = await getDoc(roomRef);
     const roomData = roomSnap.data();
-    const currentPlayerChoices = roomData?.escolhasDosPlayers || [];
+    const currentPlayerChoices = roomData?.playersChoices || [];
     const correctColor = corEscolhidaPeloPlayer === gameChoices[currentPlayerChoices.length];
 
     if (correctColor) {
@@ -105,7 +125,7 @@ const CooperativeGame = () => {
 
       if (currentPlayerChoices.length + 1 === gameChoices.length) {
         await updateDoc(roomRef, {
-          escolhasDosPlayers: [],
+          playersChoices: [],
           round: roomData?.round + 1,
           gameChoice: roomData?.gameChoice.concat(corSelecionada),
         });
@@ -114,14 +134,14 @@ const CooperativeGame = () => {
 
       } else {
         await updateDoc(roomRef, {
-          escolhasDosPlayers: [...currentPlayerChoices, corEscolhidaPeloPlayer],
+          playersChoices: [...currentPlayerChoices, corEscolhidaPeloPlayer],
         });
       }
     } else {
       BackgroundColor(false)
 
       await updateDoc(roomRef, {
-        escolhasDosPlayers: [],
+        playersChoices: [],
         round: 1,
         gameChoice: [corSelecionada],
         currentPlayer: playersInfos.player1Name,
