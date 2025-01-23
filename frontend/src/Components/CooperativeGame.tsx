@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
-import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { onSnapshot, doc, updateDoc, getDoc, DocumentSnapshot } from 'firebase/firestore';
 import { db } from '../FireBase/firebase-config';
 import Cookies from 'universal-cookie';
 import { ChangeTurn } from '../Utils/ChangeTurn';
@@ -14,7 +14,7 @@ type RoomParams = {
 
 type RoomData = {
   playersChoices: string[];
-  createdBy: string
+  createdBy: string;
   currentPlayer: string;
   gameChoice: string[];
   player1: string;
@@ -35,85 +35,99 @@ const CooperativeGame = () => {
   const [userName] = useState(cookies.get("userName"));
 
   const availableColors = ['Red', 'Yellow', 'Green', 'Blue'];
-  const [gameChoices, setGameChoices] = useState<string[]>([])
-  const [round, setRodada] = useState(1)
+  const [gameChoices, setGameChoices] = useState<string[]>([]);
+  const [round, setRodada] = useState(1);
 
-  const numeroAleatorio = Math.floor(4 * Math.random())
-  const corSelecionada = availableColors[numeroAleatorio];
-  //--------------------------------------------------------------------------------------
-  const [playersInfos, setPlayersInfos] = useState<PlayersInfos>({ player1Img: '', player2Img: '', player1Name: '', player2Name: '' });
+  const [playersInfos, setPlayersInfos] = useState<PlayersInfos>({
+    player1Img: '',
+    player2Img: '',
+    player1Name: '',
+    player2Name: '',
+  });
   const [currentPlayer, setCurrentPlayer] = useState<string>('');
 
   const { roomname } = useParams<RoomParams>();
 
-  useEffect(() => {
-    if (!roomname) return;
-    //checks if the roomname is valid
-    const unsub = onSnapshot(doc(db, "Co-op", roomname), (doc) => {
-      const roomData = doc.data() as RoomData;
+  if (!roomname) {
+    throw new Error("Room name is undefined! Ensure the route provides a valid room name.");
+  }
+
+  // ----------------------------------------------
+  // Funções Auxiliares
+  // ----------------------------------------------
+
+  const syncRoomData = (roomname: string) => {
+    const unsub = onSnapshot(doc(db, "Co-op", roomname), (docSnapshot: DocumentSnapshot) => {
+      const roomData = docSnapshot.data() as RoomData;
 
       setPlayersInfos({
-        player1Img: roomData?.player1Img,
-        player2Img: roomData?.player2Img,
-        player1Name: roomData?.player1,
-        player2Name: roomData?.player2
-      })
+        player1Img: roomData?.player1Img || '',
+        player2Img: roomData?.player2Img || '',
+        player1Name: roomData?.player1 || '',
+        player2Name: roomData?.player2 || '',
+      });
+
+      setGameChoices(roomData?.gameChoice || []);
+      setRodada(roomData?.round || 1);
+      setCurrentPlayer(roomData?.currentPlayer || '');
     });
 
-    return () => {
-      unsub();
-    };
-  }, [roomname])
+    return unsub;
+  };
+
+  const getRoomData = async (roomRef: any) => {
+    const roomSnap = await getDoc(roomRef);
+    return roomSnap.data() as RoomData;
+  };
+
+  const updateRoomWithNewColor = async (roomRef: any, roomData: RoomData) => {
+    const newColor = availableColors[Math.floor(4 * Math.random())];
+    await updateDoc(roomRef, {
+      gameChoice: roomData?.gameChoice.concat(newColor),
+    });
+  };
+
+  const setupSnapshotListener = (roomRef: any) => {
+    onSnapshot(roomRef, (docSnapshot: DocumentSnapshot) => {
+      const roomData = docSnapshot.data() as RoomData;
+      setGameChoices(roomData?.gameChoice || []);
+      setRodada(roomData?.round || 1);
+      setCurrentPlayer(roomData?.currentPlayer || '');
+    });
+  };
 
   const initializeRealTimeUpdates = async () => {
-    if (!roomname) return;
     const roomRef = doc(db, "Co-op", roomname);
 
     try {
-      const roomSnap = await getDoc(roomRef);
-      const roomData = roomSnap.data();
-
-      await updateDoc(roomRef, {
-        gameChoice: roomData?.gameChoice.concat(corSelecionada),
-      });
-      onSnapshot(roomRef, (docSnapshot) => {
-        const roomData = docSnapshot.data();
-       setGameChoices(roomData?.gameChoice);
-        setRodada(roomData?.round);
-        setCurrentPlayer(roomData?.currentPlayer);
-      });
-
+      const roomData = await getRoomData(roomRef);
+      await updateRoomWithNewColor(roomRef, roomData);
+      setupSnapshotListener(roomRef);
     } catch (error) {
       console.error(error);
     }
   };
-  
-  useEffect(() => {
-    initializeRealTimeUpdates()
-  }, []);
 
-  useEffect(() => {
-    for (let i = 0; i < gameChoices.length; i++) {
-      const piscarCores = document.querySelector<HTMLButtonElement>(`.${gameChoices[i]}`)!;
+  const flashColors = (colors: string[]) => {
+    colors.forEach((color, index) => {
+      const button = document.querySelector<HTMLButtonElement>(`.${color}`)!;
 
       setTimeout(() => {
-        piscarCores.style.backgroundColor = 'rgb(240, 240, 240)';
-      }, i * 750);
+        button.style.backgroundColor = 'rgb(240, 240, 240)';
+      }, index * 750);
 
       setTimeout(() => {
-        piscarCores.style.backgroundColor = '';
-      }, i * 750 + 600);
-    }
-  }, [round])
+        button.style.backgroundColor = '';
+      }, index * 750 + 600);
+    });
+  };
 
   const Sequencia = async (corEscolhidaPeloPlayer: string) => {
-
     if (userName !== currentPlayer) {
-      alert('Aguarde a sua vez')
+      alert('Aguarde a sua vez');
       return;
     }
 
-    if (!roomname) return;
     const roomRef = doc(db, "Co-op", roomname);
     const roomSnap = await getDoc(roomRef);
     const roomData = roomSnap.data();
@@ -121,33 +135,52 @@ const CooperativeGame = () => {
     const correctColor = corEscolhidaPeloPlayer === gameChoices[currentPlayerChoices.length];
 
     if (correctColor) {
-      BackgroundColor(true)
+      BackgroundColor(true);
 
       if (currentPlayerChoices.length + 1 === gameChoices.length) {
         await updateDoc(roomRef, {
           playersChoices: [],
           round: roomData?.round + 1,
-          gameChoice: roomData?.gameChoice.concat(corSelecionada),
+          gameChoice: roomData?.gameChoice.concat(availableColors[Math.floor(4 * Math.random())]),
         });
-        
-        ChangeTurn(roomname, 'Co-op');
 
+        ChangeTurn(roomname, 'Co-op');
       } else {
         await updateDoc(roomRef, {
           playersChoices: [...currentPlayerChoices, corEscolhidaPeloPlayer],
         });
       }
     } else {
-      BackgroundColor(false)
+      BackgroundColor(false);
 
       await updateDoc(roomRef, {
         playersChoices: [],
         round: 1,
-        gameChoice: [corSelecionada],
+        gameChoice: [availableColors[Math.floor(4 * Math.random())]],
         currentPlayer: playersInfos.player1Name,
       });
     }
-  }
+  };
+
+  // ----------------------------------------------
+  // Use Effects
+  // ----------------------------------------------
+
+  useEffect(() => {
+    syncRoomData(roomname);
+  }, [roomname]);
+
+  useEffect(() => {
+    initializeRealTimeUpdates();
+  }, []);
+
+  useEffect(() => {
+    flashColors(gameChoices);
+  }, [round]);
+
+  // ----------------------------------------------
+  // Render JSX
+  // ----------------------------------------------
 
   return (
     <>
@@ -155,18 +188,17 @@ const CooperativeGame = () => {
       <h2>Turno do Player: {currentPlayer}</h2>
       {playersInfos.player1Img && <img src={playersInfos.player1Img} />}
       {playersInfos.player2Img && <img src={playersInfos.player2Img} />}
-      
-      <div className="Buttons">
-        <button className='Red' onClick={() => { Sequencia('Red') }}>Red</button>
-        <button className='Yellow' onClick={() => { Sequencia('Yellow') }}>Yellow</button>
-      </div>
-      <div className="Buttons">
-        <button className='Green' onClick={() => { Sequencia('Green') }}>Green</button>
-        <button className='Blue' onClick={() => { Sequencia('Blue') }}>Blue</button>
-      </div>
 
+      <div className="Buttons">
+        <button className="Red" onClick={() => { Sequencia('Red') }}>Red</button>
+        <button className="Yellow" onClick={() => { Sequencia('Yellow') }}>Yellow</button>
+      </div>
+      <div className="Buttons">
+        <button className="Green" onClick={() => { Sequencia('Green') }}>Green</button>
+        <button className="Blue" onClick={() => { Sequencia('Blue') }}>Blue</button>
+      </div>
     </>
-  )
-}
+  );
+};
 
 export default CooperativeGame;
