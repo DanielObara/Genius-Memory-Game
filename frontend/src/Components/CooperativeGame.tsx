@@ -83,17 +83,14 @@ const CooperativeGame = () => {
   );
 
     return unsub;
-  }, []);
+  }, [])
 
   const getRoomData = async (roomRef: DocumentReference): Promise<RoomData> => {
     const roomSnap = await getDoc(roomRef);
     return roomSnap.data() as RoomData;
   };
 
-  const updateRoomWithNewColor = async (
-    roomRef: DocumentReference,
-    roomData: RoomData
-  ): Promise<void> => {
+  const updateRoomWithNewColor = async (roomRef: DocumentReference, roomData: RoomData): Promise<void> => {
     const newColor = availableColors[Math.floor(4 * Math.random())];
     await updateDoc(roomRef, {
       gameChoice: roomData?.gameChoice.concat(newColor),
@@ -109,7 +106,7 @@ const CooperativeGame = () => {
     });
   };
 
-  const initializeRealTimeUpdates = useCallback(async () => {
+  const initializeRealTimeUpdates = async () => {
     const roomRef = doc(db, "Co-op", roomname);
 
     try {
@@ -119,7 +116,7 @@ const CooperativeGame = () => {
     } catch (error) {
       console.error(error);
     }
-  }, [roomname, getRoomData, updateRoomWithNewColor, setupSnapshotListener]);
+  };
 
   const flashColors = (colors: string[]): void => {
     colors.forEach((color, index) => {
@@ -138,15 +135,13 @@ const CooperativeGame = () => {
   const Sequencia = async (corEscolhidaPeloPlayer: string): Promise<void> => {
     if (userName !== currentPlayer) {
       alert('Aguarde a sua vez');
-      return;
     }
 
     const roomRef = doc(db, "Co-op", roomname) as DocumentReference;
     const roomSnap = await getDoc(roomRef);
     const roomData = roomSnap.data() as RoomData;
     const currentPlayerChoices = roomData?.playersChoices || [];
-    const correctColor = 
-      corEscolhidaPeloPlayer === gameChoices[currentPlayerChoices.length];
+    const correctColor = corEscolhidaPeloPlayer === gameChoices[currentPlayerChoices.length];
 
     if (correctColor) {
       BackgroundColor(true, 250, 220)
@@ -186,11 +181,11 @@ const CooperativeGame = () => {
 
   useEffect(() => {
     initializeRealTimeUpdates();
-  }, [initializeRealTimeUpdates]);
+  }, [roomname]);
 
   useEffect(() => {
     flashColors(gameChoices);
-  }, [round, gameChoices]);
+  }, [round]);
 
   // ----------------------------------------------
   // Render JSX
