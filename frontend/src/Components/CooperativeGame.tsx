@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { 
   onSnapshot, 
@@ -63,7 +63,7 @@ const CooperativeGame = () => {
   // Funções Auxiliares
   // ----------------------------------------------
 
-  const syncRoomData = (roomname: string): () => void => {
+  const syncRoomData = useCallback((roomname: string) => {
     const unsub = onSnapshot(
       doc(db, "Co-op", roomname) as DocumentReference, 
       (docSnapshot: DocumentSnapshot) => {
@@ -79,10 +79,11 @@ const CooperativeGame = () => {
       setGameChoices(roomData?.gameChoice || []);
       setRodada(roomData?.round || 1);
       setCurrentPlayer(roomData?.currentPlayer || '');
-    });
+    }
+  );
 
     return unsub;
-  };
+  }, []);
 
   const getRoomData = async (roomRef: DocumentReference): Promise<RoomData> => {
     const roomSnap = await getDoc(roomRef);
@@ -108,8 +109,8 @@ const CooperativeGame = () => {
     });
   };
 
-  const initializeRealTimeUpdates = async (): Promise<void> => {
-    const roomRef = doc(db, "Co-op", roomname) as DocumentReference;
+  const initializeRealTimeUpdates = useCallback(async () => {
+    const roomRef = doc(db, "Co-op", roomname);
 
     try {
       const roomData = await getRoomData(roomRef);
@@ -118,7 +119,7 @@ const CooperativeGame = () => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [roomname, getRoomData, updateRoomWithNewColor, setupSnapshotListener]);
 
   const flashColors = (colors: string[]): void => {
     colors.forEach((color, index) => {
@@ -181,15 +182,15 @@ const CooperativeGame = () => {
 
   useEffect(() => {
     syncRoomData(roomname);
-  }, [roomname]);
+  }, [roomname, syncRoomData]);
 
   useEffect(() => {
     initializeRealTimeUpdates();
-  }, []);
+  }, [initializeRealTimeUpdates]);
 
   useEffect(() => {
     flashColors(gameChoices);
-  }, [round]);
+  }, [round, gameChoices]);
 
   // ----------------------------------------------
   // Render JSX
