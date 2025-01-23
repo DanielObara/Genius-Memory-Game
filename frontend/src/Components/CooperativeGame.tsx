@@ -149,7 +149,7 @@ const CooperativeGame = () => {
       corEscolhidaPeloPlayer === gameChoices[currentPlayerChoices.length];
 
     if (correctColor) {
-      BackgroundColor(true);
+      BackgroundColor(true, 250, 220)
 
       if (currentPlayerChoices.length + 1 === gameChoices.length) {
         await updateDoc(roomRef, {
@@ -165,7 +165,7 @@ const CooperativeGame = () => {
         });
       }
     } else {
-      BackgroundColor(false);
+      BackgroundColor(false,250,220);
 
       await updateDoc(roomRef, {
         playersChoices: [],

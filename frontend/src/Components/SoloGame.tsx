@@ -49,14 +49,14 @@ const SoloGame = () => {
 
 
     if (correctColor) {
-      BackgroundColor(true)
+      BackgroundColor(true, 250, 220)
 
       if (playerChoices.length + 1 === gameColorChoices.length) {
         setRound(round + 1);
         setPlayerChoices([]);
       }
     } else {
-      BackgroundColor(false)
+      BackgroundColor(false, 250, 220)
 
       if (round !== 1) {
         setRound(1)
@@ -81,6 +81,7 @@ const SoloGame = () => {
         <button className='Blue' onClick={() => { Sequencia('Blue') }}>Blue</button>
       </div>
       <ButtonLink buttontext={'Voltar'} to={'/'} id={'BackButton'}></ButtonLink>
+
     </>
   )
 }
