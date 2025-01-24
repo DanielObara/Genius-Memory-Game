@@ -1,4 +1,5 @@
-import { doc, setDoc, updateDoc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, setDoc, updateDoc, getDoc, onSnapshot, Unsubscribe } from "firebase/firestore";
+//A Unsubscribe is a interface to unsub() function
 import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
@@ -31,29 +32,31 @@ const CooperativeRoom = () => {
 
   const [playersInfos, setPlayersInfos] = useState<PlayerInfos>({ player1Img: '', player2Img: '' });
 
-  const realTime = () => {
-    const unsub = onSnapshot(doc(db, "Co-op", createRoom), (doc) => {
-
-      const roomData = doc.data() as RoomData;
-
-      setPlayersInfos({
-        player1Img: roomData?.player1Img,
-        player2Img: roomData?.player2Img
-      })
-
-      if (roomData?.player1Img && roomData?.player2Img) {
-        document.body.style.backgroundColor = 'rgb(44, 245, 44)';
-
-        setTimeout(() => {
-          document.body.style.backgroundColor = '';
-        }, 400);
-        setTimeout(() => {
-          navigate(`/co-op/${createRoom}`);
-          unsub()
-        }, 2400);
-      }
+  const handleRoomData = (roomData: RoomData, unsub: Unsubscribe) => {
+    setPlayersInfos({
+      player1Img: roomData?.player1Img,
+      player2Img: roomData?.player2Img
     });
-  }
+  
+    if (roomData?.player1Img && roomData?.player2Img) {
+      navigateToRoomAfterTimer(unsub);
+    }
+  };
+  
+  const navigateToRoomAfterTimer = (unsub:Unsubscribe) => {
+    setTimeout(() => {
+      navigate(`/co-op/${createRoom}`);
+      unsub();
+    }, 1000);
+  };
+  
+  const initializeRealTimeUpdates = () => {
+    const unsub = onSnapshot(doc(db, "Co-op", createRoom), (doc) => {
+      const roomData = doc.data() as RoomData;
+      handleRoomData(roomData, unsub);
+    });
+  };
+
   const saveRoom = async () => {
 
     try {
@@ -67,7 +70,7 @@ const CooperativeRoom = () => {
         round: 1,
         currentPlayer: userName,
       });
-      realTime()
+      initializeRealTimeUpdates()
 
     } catch (error) {
       console.error(error);
@@ -87,7 +90,7 @@ const CooperativeRoom = () => {
             player2: userName,
             player2Img: userImg
           });
-          realTime()
+          initializeRealTimeUpdates()
 
         } else {
           alert("sala cheia");
