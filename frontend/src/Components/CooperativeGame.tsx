@@ -146,7 +146,7 @@ const CooperativeGame = () => {
     const selectedColor = randomNumber
 
     if (correctColor) {
-      BackgroundColor(true, 220)
+      BackgroundColor(true, true,220, document.body)
 
       if (currentPlayerChoices.length + 1 === gameChoices.length) {
         await updateDoc(roomRef, {
@@ -162,7 +162,7 @@ const CooperativeGame = () => {
         });
       }
     } else {
-      BackgroundColor(false,220);
+      BackgroundColor(false,true,220, document.body);
 
       await updateDoc(roomRef, {
         playersChoices: [],

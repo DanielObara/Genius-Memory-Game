@@ -49,14 +49,14 @@ const SoloGame = () => {
 
 
     if (correctColor) {
-      BackgroundColor(true, 230)
+      BackgroundColor(true,true, 230, document.body)
 
       if (playerChoices.length + 1 === gameColorChoices.length) {
         setRound(round + 1);
         setPlayerChoices([]);
       }
     } else {
-      BackgroundColor(false, 230)
+      BackgroundColor(false, true, 230, document.body)
 
       if (round !== 1) {
         setRound(1)
