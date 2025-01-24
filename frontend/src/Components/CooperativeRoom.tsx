@@ -21,15 +21,14 @@ type RoomData = {
 }
 
 const cookies = new Cookies();
+const isAuth = cookies.get("auth-token");
+const userName = cookies.get("userName");
+const userImg = cookies.get("userImg");
+const navigate = useNavigate();
 
 const CooperativeRoom = () => {
-  const [isAuth] = useState(cookies.get("auth-token"));
-  const [userName] = useState(cookies.get("userName"));
-  const [userImg] = useState(cookies.get("userImg"));
 
   const [createRoom, setCreateRoom] = useState<string>('');
-  const navigate = useNavigate();
-
   const [playersInfos, setPlayersInfos] = useState<PlayerInfos>({ player1Img: '', player2Img: '' });
 
   const handleRoomData = (roomData: RoomData, unsub: Unsubscribe) => {
