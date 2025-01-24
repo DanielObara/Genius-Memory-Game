@@ -41,10 +41,12 @@ type PlayersInfos = {
   player2Img: string;
 };
 
+const AVAILABLE_COLORS: string[] = ['Red', 'Yellow', 'Green', 'Blue'];
+const RANDOM_NUMBER = AVAILABLE_COLORS[Math.floor(4 * Math.random())]
+
 const CooperativeGame = () => {
   const [userName] = useState(cookies.get("userName") || "");
 
-  const availableColors = ['Red', 'Yellow', 'Green', 'Blue'];
   const [gameChoices, setGameChoices] = useState<string[]>([]);
   const [round, setRodada] = useState(1);
 
@@ -89,7 +91,7 @@ const CooperativeGame = () => {
   };
 
   const updateRoomWithNewColor = async (roomRef: DocumentReference, roomData: RoomData): Promise<void> => {
-    const newColor = availableColors[Math.floor(4 * Math.random())];
+    const newColor = RANDOM_NUMBER
     await updateDoc(roomRef, {
       gameChoice: roomData?.gameChoice.concat(newColor),
     });
@@ -140,7 +142,7 @@ const CooperativeGame = () => {
     const roomData = roomSnap.data() as RoomData;
     const currentPlayerChoices = roomData?.playersChoices || [];
     const correctColor = corEscolhidaPeloPlayer === gameChoices[currentPlayerChoices.length];
-    const selectedColor = availableColors[Math.floor(4 * Math.random())];
+    const selectedColor = RANDOM_NUMBER
 
     if (correctColor) {
       BackgroundColor(true, 220)
@@ -164,7 +166,7 @@ const CooperativeGame = () => {
       await updateDoc(roomRef, {
         playersChoices: [],
         round: 1,
-        gameChoice: [availableColors[Math.floor(4 * Math.random())]],
+        gameChoice: [AVAILABLE_COLORS[Math.floor(4 * Math.random())]],
         currentPlayer: playersInfos.player1Name,
       });
     }
