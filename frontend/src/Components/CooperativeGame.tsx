@@ -13,6 +13,9 @@ import Cookies from 'universal-cookie';
 import { ChangeTurn } from '../Utils/ChangeTurn';
 import { BackgroundColor } from '../Utils/BackgroundColor';
 
+//A DocumentReference refers to a document location in a Firestore database
+//A DocumentSnapshot contains data read from a document in Firestore database
+
 const cookies = new Cookies();
 
 type RoomParams = {
@@ -45,12 +48,7 @@ const CooperativeGame = () => {
   const [gameChoices, setGameChoices] = useState<string[]>([]);
   const [round, setRodada] = useState(1);
 
-  const [playersInfos, setPlayersInfos] = useState<PlayersInfos>({
-    player1Img: '',
-    player2Img: '',
-    player1Name: '',
-    player2Name: '',
-  });
+  const [playersInfos, setPlayersInfos] = useState<PlayersInfos>({player1Img: '',player2Img: '',player1Name: '',player2Name: ''});
   const [currentPlayer, setCurrentPlayer] = useState<string>('');
 
   const { roomname } = useParams<RoomParams>();
@@ -137,20 +135,21 @@ const CooperativeGame = () => {
       alert('Aguarde a sua vez');
     }
 
-    const roomRef = doc(db, "Co-op", roomname) as DocumentReference;
+    const roomRef = doc(db, "Co-op", roomname);
     const roomSnap = await getDoc(roomRef);
     const roomData = roomSnap.data() as RoomData;
     const currentPlayerChoices = roomData?.playersChoices || [];
     const correctColor = corEscolhidaPeloPlayer === gameChoices[currentPlayerChoices.length];
+    const selectedColor = availableColors[Math.floor(4 * Math.random())];
 
     if (correctColor) {
-      BackgroundColor(true, 250, 220)
+      BackgroundColor(true, 220)
 
       if (currentPlayerChoices.length + 1 === gameChoices.length) {
         await updateDoc(roomRef, {
           playersChoices: [],
           round: roomData?.round + 1,
-          gameChoice: roomData?.gameChoice.concat(availableColors[Math.floor(4 * Math.random())]),
+          gameChoice: roomData?.gameChoice.concat(selectedColor),
         });
 
         ChangeTurn(roomname, 'Co-op');
@@ -160,7 +159,7 @@ const CooperativeGame = () => {
         });
       }
     } else {
-      BackgroundColor(false,250,220);
+      BackgroundColor(false,220);
 
       await updateDoc(roomRef, {
         playersChoices: [],
