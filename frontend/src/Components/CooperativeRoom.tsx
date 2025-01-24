@@ -24,10 +24,10 @@ const cookies = new Cookies();
 const isAuth = cookies.get("auth-token");
 const userName = cookies.get("userName");
 const userImg = cookies.get("userImg");
-const navigate = useNavigate();
 
 const CooperativeRoom = () => {
 
+  const navigate = useNavigate();
   const [createRoom, setCreateRoom] = useState<string>('');
   const [playersInfos, setPlayersInfos] = useState<PlayerInfos>({ player1Img: '', player2Img: '' });
 
