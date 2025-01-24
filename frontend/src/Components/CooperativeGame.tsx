@@ -12,6 +12,7 @@ import { db } from '../FireBase/firebase-config';
 import Cookies from 'universal-cookie';
 import { ChangeTurn } from '../Utils/ChangeTurn';
 import { BackgroundColor } from '../Utils/BackgroundColor';
+import ColorButtons from './ColorButtons';
 
 //A DocumentReference refers to a document location in a Firestore database
 //A DocumentSnapshot contains data read from a document in Firestore database
@@ -146,7 +147,7 @@ const CooperativeGame = () => {
     const selectedColor = randomNumber
 
     if (correctColor) {
-      BackgroundColor(true, true,220, document.body)
+      BackgroundColor(true, true, 220, document.body)
 
       if (currentPlayerChoices.length + 1 === gameChoices.length) {
         await updateDoc(roomRef, {
@@ -162,7 +163,7 @@ const CooperativeGame = () => {
         });
       }
     } else {
-      BackgroundColor(false,true,220, document.body);
+      BackgroundColor(false,true, 220, document.body);
 
       await updateDoc(roomRef, {
         playersChoices: [],
@@ -199,15 +200,8 @@ const CooperativeGame = () => {
       <h2>Turno do Player: {currentPlayer}</h2>
       {playersInfos.player1Img && <img src={playersInfos.player1Img} />}
       {playersInfos.player2Img && <img src={playersInfos.player2Img} />}
-
-      <div className="Buttons">
-        <button className="Red" onClick={() => { Sequencia('Red') }}>Red</button>
-        <button className="Yellow" onClick={() => { Sequencia('Yellow') }}>Yellow</button>
-      </div>
-      <div className="Buttons">
-        <button className="Green" onClick={() => { Sequencia('Green') }}>Green</button>
-        <button className="Blue" onClick={() => { Sequencia('Blue') }}>Blue</button>
-      </div>
+      
+      <ColorButtons Sequencia={Sequencia}></ColorButtons>
     </>
   );
 };
