@@ -45,14 +45,13 @@ type PlayersInfos = {
 const AVAILABLE_COLORS: string[] = ['Red', 'Yellow', 'Green', 'Blue'];
 
 const CooperativeGame = () => {
-  const randomNumber = AVAILABLE_COLORS[Math.floor(4 * Math.random())]
-  
-  const [userName] = useState(cookies.get("userName") || "");
+  const randomNumber = AVAILABLE_COLORS[Math.floor(4 * Math.random())];
 
+  const [userName] = useState(cookies.get("userName") || "");
   const [gameChoices, setGameChoices] = useState<string[]>([]);
   const [round, setRodada] = useState(1);
 
-  const [playersInfos, setPlayersInfos] = useState<PlayersInfos>({player1Img: '',player2Img: '',player1Name: '',player2Name: ''});
+  const [playersInfos, setPlayersInfos] = useState<PlayersInfos>({player1Img: '',player2Img: '',player1Name: '', player2Name: ''});
   const [currentPlayer, setCurrentPlayer] = useState<string>('');
 
   const { roomname } = useParams<RoomParams>();
@@ -66,46 +65,77 @@ const CooperativeGame = () => {
   // ----------------------------------------------
 
   const syncRoomData = useCallback((roomname: string) => {
-    const unsub = onSnapshot(
-      doc(db, "Co-op", roomname) as DocumentReference, 
-      (docSnapshot: DocumentSnapshot) => {
-        const roomData = docSnapshot.data() as RoomData;
+    try {
+      const unsub = onSnapshot(
+        doc(db, "Co-op", roomname) as DocumentReference, 
+        (docSnapshot: DocumentSnapshot) => {
+          const roomData = docSnapshot.data() as RoomData;
 
-      setPlayersInfos({
-        player1Img: roomData?.player1Img || '',
-        player2Img: roomData?.player2Img || '',
-        player1Name: roomData?.player1 || '',
-        player2Name: roomData?.player2 || '',
-      });
+          setPlayersInfos({
+            player1Img: roomData?.player1Img || '',
+            player2Img: roomData?.player2Img || '',
+            player1Name: roomData?.player1 || '',
+            player2Name: roomData?.player2 || '',
+          });
 
-      setGameChoices(roomData?.gameChoice || []);
-      setRodada(roomData?.round || 1);
-      setCurrentPlayer(roomData?.currentPlayer || '');
+          setGameChoices(roomData?.gameChoice || []);
+          setRodada(roomData?.round || 1);
+          setCurrentPlayer(roomData?.currentPlayer || '');
+        },
+        (error) => {
+          console.error("Error syncing room data:", error);
+          alert("Failed to sync room data. Please try again later.");
+        }
+      );
+
+      return unsub;
+    } catch (error) {
+      console.error("Error in syncRoomData:", error);
+      alert("An unexpected error occurred while syncing room data.");
     }
-  );
-
-    return unsub;
-  }, [])
+  }, []);
 
   const getRoomData = async (roomRef: DocumentReference): Promise<RoomData> => {
-    const roomSnap = await getDoc(roomRef);
-    return roomSnap.data() as RoomData;
+    try {
+      const roomSnap = await getDoc(roomRef);
+      if (!roomSnap.exists()) {
+        throw new Error("Room data not found!");
+      }
+      return roomSnap.data() as RoomData;
+    } catch (error) {
+      console.error("Error fetching room data:", error);
+      throw new Error("Failed to fetch room data.");
+    }
   };
 
   const updateRoomWithNewColor = async (roomRef: DocumentReference, roomData: RoomData): Promise<void> => {
-    const newColor = randomNumber
-    await updateDoc(roomRef, {
-      gameChoice: roomData?.gameChoice.concat(newColor),
-    });
+    try {
+      const newColor = randomNumber;
+      await updateDoc(roomRef, {
+        gameChoice: roomData?.gameChoice.concat(newColor),
+      });
+    } catch (error) {
+      console.error("Error updating room with new color:", error);
+      alert("Failed to update room with a new color.");
+    }
   };
 
   const setupSnapshotListener = (roomRef: DocumentReference): void => {
-    onSnapshot(roomRef, (docSnapshot: DocumentSnapshot) => {
-      const roomData = docSnapshot.data() as RoomData;
-      setGameChoices(roomData?.gameChoice || []);
-      setRodada(roomData?.round || 1);
-      setCurrentPlayer(roomData?.currentPlayer || '');
-    });
+    try {
+      onSnapshot(roomRef, (docSnapshot: DocumentSnapshot) => {
+        const roomData = docSnapshot.data() as RoomData;
+        setGameChoices(roomData?.gameChoice || []);
+        setRodada(roomData?.round || 1);
+        setCurrentPlayer(roomData?.currentPlayer || '');
+      }, 
+      (error) => {
+        console.error("Error setting up snapshot listener:", error);
+        alert("Failed to set up real-time updates.");
+      });
+    } catch (error) {
+      console.error("Error in setupSnapshotListener:", error);
+      alert("An unexpected error occurred while setting up updates.");
+    }
   };
 
   const initializeRealTimeUpdates = async () => {
@@ -116,61 +146,73 @@ const CooperativeGame = () => {
       await updateRoomWithNewColor(roomRef, roomData);
       setupSnapshotListener(roomRef);
     } catch (error) {
-      console.error(error);
+      console.error("Error initializing real-time updates:", error);
+      alert("Failed to initialize real-time updates. Please try again.");
     }
   };
 
   const flashColors = (colors: string[]): void => {
-    colors.forEach((color, index) => {
-      const button = document.querySelector<HTMLButtonElement>(`.${color}`)!;
+    try {
+      colors.forEach((color, index) => {
+        const button = document.querySelector<HTMLButtonElement>(`.${color}`)!;
 
-      setTimeout(() => {
-        button.style.backgroundColor = 'rgb(240, 240, 240)';
-      }, index * 750);
+        setTimeout(() => {
+          button.style.backgroundColor = 'rgb(240, 240, 240)';
+        }, index * 750);
 
-      setTimeout(() => {
-        button.style.backgroundColor = '';
-      }, index * 750 + 600);
-    });
+        setTimeout(() => {
+          button.style.backgroundColor = '';
+        }, index * 750 + 600);
+      });
+    } catch (error) {
+      console.error("Error flashing colors:", error);
+    }
   };
 
   const Sequencia = async (corEscolhidaPeloPlayer: string): Promise<void> => {
-    if (userName !== currentPlayer) {
-      alert('Aguarde a sua vez');
-    }
+    try {
+      if (userName !== currentPlayer) {
+        alert('Aguarde a sua vez');
+        return;
+      }
 
-    const roomRef = doc(db, "Co-op", roomname);
-    const roomSnap = await getDoc(roomRef);
-    const roomData = roomSnap.data() as RoomData;
-    const currentPlayerChoices = roomData?.playersChoices || [];
-    const correctColor = corEscolhidaPeloPlayer === gameChoices[currentPlayerChoices.length];
-    const selectedColor = randomNumber
+      const roomRef = doc(db, "Co-op", roomname);
+      const roomSnap = await getDoc(roomRef);
+      const roomData = roomSnap.data() as RoomData;
 
-    if (correctColor) {
-      BackgroundColor(true, true, 220, document.body)
+      const currentPlayerChoices = roomData?.playersChoices || [];
+      const correctColor = corEscolhidaPeloPlayer === gameChoices[currentPlayerChoices.length];
+      const selectedColor = randomNumber;
 
-      if (currentPlayerChoices.length + 1 === gameChoices.length) {
+      if (correctColor) {
+        BackgroundColor(true,true, 220, document.body);
+
+        if (currentPlayerChoices.length + 1 === gameChoices.length) {
+          await updateDoc(roomRef, {
+            playersChoices: [],
+            round: roomData?.round + 1,
+            gameChoice: roomData?.gameChoice.concat(selectedColor),
+          });
+
+          ChangeTurn(roomname, 'Co-op');
+        } else {
+          await updateDoc(roomRef, {
+            playersChoices: [...currentPlayerChoices, corEscolhidaPeloPlayer],
+          });
+        }
+      } else {
+        BackgroundColor(false,true, 220, document.body);
+
         await updateDoc(roomRef, {
           playersChoices: [],
-          round: roomData?.round + 1,
-          gameChoice: roomData?.gameChoice.concat(selectedColor),
-        });
-
-        ChangeTurn(roomname, 'Co-op');
-      } else {
-        await updateDoc(roomRef, {
-          playersChoices: [...currentPlayerChoices, corEscolhidaPeloPlayer],
+          round: 1,
+          gameChoice: [randomNumber],
+          currentPlayer: playersInfos.player1Name,
         });
       }
-    } else {
-      BackgroundColor(false,true, 220, document.body);
-
-      await updateDoc(roomRef, {
-        playersChoices: [],
-        round: 1,
-        gameChoice: [randomNumber],
-        currentPlayer: playersInfos.player1Name,
-      });
+    } catch (error) {
+      console.error("Error in Sequencia function:", error);
+      alert("An error occurred while processing your move. Please try again.");
     }
   };
 
@@ -200,8 +242,7 @@ const CooperativeGame = () => {
       <h2>Turno do Player: {currentPlayer}</h2>
       {playersInfos.player1Img && <img src={playersInfos.player1Img} />}
       {playersInfos.player2Img && <img src={playersInfos.player2Img} />}
-      
-      <ColorButtons Sequencia={Sequencia}></ColorButtons>
+      <ColorButtons Sequencia={Sequencia} />
     </>
   );
 };
