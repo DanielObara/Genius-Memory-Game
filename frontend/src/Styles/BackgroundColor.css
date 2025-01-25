@@ -4,3 +4,6 @@
 .background-incorrect{
     background-color: red;
 }
+.background-flash {
+    background-color: rgb(231, 230, 230) !important;
+}

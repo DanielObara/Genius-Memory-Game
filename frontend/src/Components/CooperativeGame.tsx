@@ -157,11 +157,11 @@ const CooperativeGame = () => {
         const button = document.querySelector<HTMLButtonElement>(`.${color}`)!;
 
         setTimeout(() => {
-          button.style.backgroundColor = 'rgb(240, 240, 240)';
+          button.classList.add('background-flash')
         }, index * 750);
 
         setTimeout(() => {
-          button.style.backgroundColor = '';
+          button.classList.remove('background-flash')
         }, index * 750 + 600);
       });
     } catch (error) {
