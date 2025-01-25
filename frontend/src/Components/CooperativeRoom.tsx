@@ -21,11 +21,11 @@ type RoomData = {
 }
 
 const cookies = new Cookies();
-const isAuth = cookies.get("auth-token");
-const userName = cookies.get("userName");
-const userImg = cookies.get("userImg");
 
 const CooperativeRoom = () => {
+  const [isAuth] = useState(cookies.get("auth-token"));
+  const [userName] = useState(cookies.get("userName"));
+  const [userImg] = useState(cookies.get("userImg"));
 
   const navigate = useNavigate();
   const [createRoom, setCreateRoom] = useState<string>('');
