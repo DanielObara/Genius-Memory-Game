@@ -163,7 +163,7 @@ const CooperativeGame = () => {
           });
             
           ChangeTurn(roomname, 'Co-op');
-          setFlashClass('flash-blue');
+          setFlashClass('flash-pink');
           setTimeout(() => setFlashClass(''), 150);
         } else {
           await updateDoc(roomRef, {
