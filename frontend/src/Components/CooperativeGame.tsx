@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { 
   onSnapshot, 
@@ -11,8 +11,9 @@ import {
 import { db } from '../FireBase/firebase-config';
 import Cookies from 'universal-cookie';
 import { ChangeTurn } from '../Utils/ChangeTurn';
-import { BackgroundColor } from '../Utils/BackgroundColor';
 import ColorButtons from './ColorButtons';
+import '../Styles/BackGroundColor.css'
+import { useBackground } from './BackgroundContext';
 
 //A DocumentReference refers to a document location in a Firestore database
 //A DocumentSnapshot contains data read from a document in Firestore database
@@ -60,14 +61,10 @@ const CooperativeGame = () => {
     throw new Error("Room name is undefined! Ensure the route provides a valid room name.");
   }
 
-  // ----------------------------------------------
-  // Funções Auxiliares
-  // ----------------------------------------------
-
-  const syncRoomData = useCallback((roomname: string) => {
+  const syncRoomData = (roomname: string) => {
     try {
       const unsub = onSnapshot(
-        doc(db, "Co-op", roomname) as DocumentReference, 
+        doc(db, "Co-op", roomname) as DocumentReference,
         (docSnapshot: DocumentSnapshot) => {
           const roomData = docSnapshot.data() as RoomData;
 
@@ -79,44 +76,15 @@ const CooperativeGame = () => {
           });
 
           setGameChoices(roomData?.gameChoice || []);
-          setRodada(roomData?.round || 1);
+          setRodada(roomData?.round);
           setCurrentPlayer(roomData?.currentPlayer || '');
-        },
-        (error) => {
-          console.error("Error syncing room data:", error);
-          alert("Failed to sync room data. Please try again later.");
-        }
-      );
+        })
 
-      return unsub;
+      return unsub
+
     } catch (error) {
       console.error("Error in syncRoomData:", error);
       alert("An unexpected error occurred while syncing room data.");
-    }
-  }, []);
-
-  const getRoomData = async (roomRef: DocumentReference): Promise<RoomData> => {
-    try {
-      const roomSnap = await getDoc(roomRef);
-      if (!roomSnap.exists()) {
-        throw new Error("Room data not found!");
-      }
-      return roomSnap.data() as RoomData;
-    } catch (error) {
-      console.error("Error fetching room data:", error);
-      throw new Error("Failed to fetch room data.");
-    }
-  };
-
-  const updateRoomWithNewColor = async (roomRef: DocumentReference, roomData: RoomData): Promise<void> => {
-    try {
-      const newColor = randomNumber;
-      await updateDoc(roomRef, {
-        gameChoice: roomData?.gameChoice.concat(newColor),
-      });
-    } catch (error) {
-      console.error("Error updating room with new color:", error);
-      alert("Failed to update room with a new color.");
     }
   };
 
@@ -140,10 +108,8 @@ const CooperativeGame = () => {
 
   const initializeRealTimeUpdates = async () => {
     const roomRef = doc(db, "Co-op", roomname);
-
+  
     try {
-      const roomData = await getRoomData(roomRef);
-      await updateRoomWithNewColor(roomRef, roomData);
       setupSnapshotListener(roomRef);
     } catch (error) {
       console.error("Error initializing real-time updates:", error);
@@ -157,11 +123,11 @@ const CooperativeGame = () => {
         const button = document.querySelector<HTMLButtonElement>(`.${color}`)!;
 
         setTimeout(() => {
-          button.classList.add('background-flash')
+          button.style.backgroundColor = 'rgb(240, 240, 240)';
         }, index * 750);
 
         setTimeout(() => {
-          button.classList.remove('background-flash')
+          button.style.backgroundColor = '';
         }, index * 750 + 600);
       });
     } catch (error) {
@@ -169,6 +135,7 @@ const CooperativeGame = () => {
     }
   };
 
+  const { setFlashClass } = useBackground(); // Use o contexto
   const Sequencia = async (corEscolhidaPeloPlayer: string): Promise<void> => {
     try {
       if (userName !== currentPlayer) {
@@ -185,7 +152,8 @@ const CooperativeGame = () => {
       const selectedColor = randomNumber;
 
       if (correctColor) {
-        BackgroundColor(true,true, 220, document.body);
+        setFlashClass('flash-green');
+        setTimeout(() => setFlashClass(''), 150);
 
         if (currentPlayerChoices.length + 1 === gameChoices.length) {
           await updateDoc(roomRef, {
@@ -193,15 +161,18 @@ const CooperativeGame = () => {
             round: roomData?.round + 1,
             gameChoice: roomData?.gameChoice.concat(selectedColor),
           });
-
+            
           ChangeTurn(roomname, 'Co-op');
+          setFlashClass('flash-blue');
+          setTimeout(() => setFlashClass(''), 150);
         } else {
           await updateDoc(roomRef, {
             playersChoices: [...currentPlayerChoices, corEscolhidaPeloPlayer],
           });
         }
       } else {
-        BackgroundColor(false,true, 220, document.body);
+        setFlashClass('flash-red');
+        setTimeout(() => setFlashClass(''), 150);
 
         await updateDoc(roomRef, {
           playersChoices: [],
@@ -222,11 +193,8 @@ const CooperativeGame = () => {
 
   useEffect(() => {
     syncRoomData(roomname);
-  }, [roomname, syncRoomData]);
-
-  useEffect(() => {
     initializeRealTimeUpdates();
-  }, [roomname]);
+  }, []);
 
   useEffect(() => {
     flashColors(gameChoices);

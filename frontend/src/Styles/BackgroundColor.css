@@ -1,9 +1,21 @@
-.background-correct{
-    background-color: rgb(44, 245, 44);
-}
-.background-incorrect{
-    background-color: red;
-}
-.background-flash {
-    background-color: rgb(231, 230, 230) !important;
-}
+.background-container {
+    transition: background-color 0.4s ease;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+  }
+  
+  .flash-green {
+    background-color: rgba(41, 219, 41, 0.571);
+  }
+  
+  .flash-red {
+    background-color: rgba(255, 0, 0, 0.571);
+  }
+
+  .flash-blue {
+    background-color: rgba(82, 82, 237, 0.571);
+  }
+  

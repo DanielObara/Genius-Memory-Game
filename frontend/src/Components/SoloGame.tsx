@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import ButtonLink from './ButtonLink'
-import { BackgroundColor } from '../Utils/BackgroundColor';
+import '../Styles/BackGroundColor.css'
 import ColorButtons from './ColorButtons';
+import { useBackground } from './BackgroundContext';
 
 interface SoloGameState {
   gameColorChoices: string[];
@@ -15,6 +16,8 @@ const SoloGame = () => {
   const [playerChoices, setPlayerChoices] = useState<SoloGameState['playerChoices']>([]);
   const [round, setRound] = useState<SoloGameState['round']>(1);
 
+  const { setFlashClass } = useBackground(); 
+  
   const randomNumber = Math.floor(4 * Math.random())
   const selectedColor = availableColors[randomNumber];
 
@@ -50,14 +53,16 @@ const SoloGame = () => {
 
 
     if (correctColor) {
-      BackgroundColor(true,true, 230, document.body)
+      setFlashClass('flash-green');
+      setTimeout(() => setFlashClass(''), 150);
 
       if (playerChoices.length + 1 === gameColorChoices.length) {
         setRound(round + 1);
         setPlayerChoices([]);
       }
     } else {
-      BackgroundColor(false, true, 230, document.body)
+      setFlashClass('flash-red');
+      setTimeout(() => setFlashClass(''), 150);
 
       if (round !== 1) {
         setRound(1)
