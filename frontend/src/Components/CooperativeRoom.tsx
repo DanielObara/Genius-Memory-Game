@@ -8,16 +8,16 @@ import RoomForm from "./RoomForm";
 const cookies = new Cookies();
 
 const CooperativeRoom = () => {
-  const [isAuth] = useState(cookies.get("auth-token"));
-  const [userName] = useState(cookies.get("userName"));
-  
+  const [isAuth] = useState<string | null>(cookies.get("auth-token") || null);
+  const [userName] = useState<string | null>(cookies.get("userName") || "Convidado");
+
   return (
     <div>
       <h1>Cooperativo</h1>
       {isAuth ? (
         <div>
           <p>Bem-vindo, {userName}</p>
-          <RoomForm></RoomForm>
+          <RoomForm />
         </div>
       ) : (
         <p>Faça login primeiro</p>
