@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import '../Styles/Home.css'
+import '../Styles/HomePage.css'
 import ButtonLink from './ButtonLink'
 import introJs from 'intro.js';
 import '../Styles/GameButton.css'
@@ -14,7 +14,7 @@ const Home = () => {
         {
           intro: `<div style="text-align: center;">
           Bem-vindo ao Genius Game 
-          <img src="/maka.gif" style="width: 200px; height: auto;  margin-top: 20px;" />
+          <img src="/maka.gif" class='gif' />
         </div>`
         },
         {
@@ -43,7 +43,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className='Home'>
+    <div className='HomePage'>
       <Auth></Auth>
       <h1>Genius Game</h1>
       <div className='GameModes'>

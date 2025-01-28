@@ -13,8 +13,13 @@
     opacity: 0;
     animation: fadeIn 0.5s ease-in 0.1s forwards;
 }
-.Home{
+.HomePage{
     margin-top: 90px;
+}
+.gif{
+    width: 200px;
+    height: auto;
+    margin-top: 20px;
 }
 @keyframes fadeIn {
     0% {
