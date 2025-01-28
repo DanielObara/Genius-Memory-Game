@@ -10,7 +10,6 @@ interface BackgroundContextProps {
 
 export const useBackground = () => {
   const context = useContext(BackgroundContext);
-  console.log(BackgroundContext);
   
   if (!context) {
     throw new Error('useBackground must be used within a BackgroundProvider');
