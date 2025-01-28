@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { db } from "../FireBase/firebase-config";
 import "../Styles/CooperativeRoom.css";
-
 import ButtonLink from "./ButtonLink";
 
 interface PlayerInfos {
@@ -37,8 +36,8 @@ const CooperativeRoom = () => {
 
   const updatePlayersInfo = (roomData: RoomData) => {
     setPlayersInfos({
-      player1Img: roomData?.player1Img,
-      player2Img: roomData?.player2Img,
+      player1Img: roomData?.player1Img || "",
+      player2Img: roomData?.player2Img || "",
     });
   };
 
@@ -50,14 +49,35 @@ const CooperativeRoom = () => {
   };
 
   const initializeRealTimeUpdates = () => {
-    const unsub = onSnapshot(doc(db, "Co-op", createRoom), (doc) => {
-      const roomData = doc.data() as RoomData;
-      updatePlayersInfo(roomData);
-
-      if (roomData?.player1Img && roomData?.player2Img) {
-        navigateToRoomAfterTimer(unsub);
+    try {
+      if (!createRoom.trim()) {
+        alert("Nome da sala não pode estar vazio.");
+        return;
       }
-    });
+
+      const unsub = onSnapshot(
+        doc(db, "Co-op", createRoom),
+        (doc) => {
+          const roomData = doc.data() as RoomData;
+          if (!roomData) {
+            console.warn("Tentando acessar uma sala inexistente:", createRoom);
+            return;
+          }
+          updatePlayersInfo(roomData);
+
+          if (roomData?.player1Img && roomData?.player2Img) {
+            navigateToRoomAfterTimer(unsub);
+          }
+        },
+        (error) => {
+          console.error("Erro ao escutar as atualizações da sala:", error);
+          alert("Erro ao sincronizar os dados da sala. Por favor, tente novamente.");
+        }
+      );
+    } catch (error) {
+      console.error("Erro inesperado ao inicializar atualizações em tempo real:", error);
+      alert("Erro inesperado ao conectar à sala. Tente novamente mais tarde.");
+    }
   };
 
   // ---------------------------
@@ -66,6 +86,11 @@ const CooperativeRoom = () => {
 
   const saveRoom = async () => {
     try {
+      if (!createRoom.trim()) {
+        alert("Nome da sala não pode estar vazio.");
+        return;
+      }
+
       await setDoc(doc(db, "Co-op", createRoom), {
         createdBy: userName,
         player1: userName,
@@ -76,6 +101,8 @@ const CooperativeRoom = () => {
         round: 1,
         currentPlayer: userName,
       });
+
+      console.log(`Sala "${createRoom}" criada com sucesso por ${userName}`);
       initializeRealTimeUpdates();
     } catch (error) {
       console.error("Erro ao criar a sala:", error);
@@ -85,11 +112,16 @@ const CooperativeRoom = () => {
 
   const joinRoom = async () => {
     try {
+      if (!createRoom.trim()) {
+        alert("Nome da sala não pode estar vazio.");
+        return;
+      }
+
       const coopRoom = doc(db, "Co-op", createRoom);
       const roomSnap = await getDoc(coopRoom);
 
       if (!roomSnap.exists()) {
-        alert("Sala não encontrada");
+        alert("Sala não encontrada.");
         return;
       }
 
@@ -100,9 +132,11 @@ const CooperativeRoom = () => {
           player2: userName,
           player2Img: userImg,
         });
+
+        console.log(`${userName} entrou na sala "${createRoom}"`);
         initializeRealTimeUpdates();
       } else {
-        alert("Sala cheia");
+        alert("Sala cheia.");
       }
     } catch (error) {
       console.error("Erro ao entrar na sala:", error);
@@ -143,7 +177,7 @@ const CooperativeRoom = () => {
       ) : (
         <p>Faça login primeiro</p>
       )}
-      <ButtonLink buttontext={"Voltar"} to={"/"} id={"BackButton"}></ButtonLink>
+      <ButtonLink buttontext={"Voltar"} to={"/"} id={"BackButton"} />
     </div>
   );
 };
