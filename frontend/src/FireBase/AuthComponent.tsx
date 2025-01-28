@@ -59,9 +59,9 @@ function AuthComponent() {
       {isAuth ? (
         <div className='Logado'>
           <button onClick={handleSignOut}>
-            <img className='LogOut' src={LogOut} alt="Sair" />Sair da conta
+            <img className='LogOut' src={LogOut} alt="Logout" />Sair da conta
           </button>
-          {userImg && <img className='UserImg' src={userImg} alt="Usuário" />}
+          {userImg && <img className='UserImg' src={userImg} alt="User Avatar" />}
         </div>
       ) : (
         <div className='NaoLogado'>
