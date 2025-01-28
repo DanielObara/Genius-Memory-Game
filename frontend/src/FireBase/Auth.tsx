@@ -41,7 +41,7 @@ function Auth() {
       setUserImg(result.user.photoURL);
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      alert("Falha no login. Por favor, tente novamente.");
+      
     }
   };
 
