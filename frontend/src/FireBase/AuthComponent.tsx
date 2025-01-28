@@ -9,20 +9,20 @@ import '../Styles/Auth.css';
 const cookies = new Cookies();
 
 function AuthComponent() {
-  const [isAuth, setIsAuth] = useState(cookies.get("auth-token"));
-  const [userImg, setUserImg] = useState(cookies.get("userImg"));
+  const [isAuth, setIsAuth] = useState<boolean>(!!cookies.get("auth-token"));
+  const [userImg, setUserImg] = useState<any>(cookies.get("userImg") || null);
 
   // ---------------------------
   // Funções Auxiliares
   // ---------------------------
 
-  const saveAuthCookies = (result: any) => {
+  const saveAuthCookies = (result: { user: { refreshToken: string; displayName: any; photoURL: any } }): void => {
     cookies.set("auth-token", result.user.refreshToken);
-    cookies.set("userName", result.user.displayName);
-    cookies.set("userImg", result.user.photoURL);
+    cookies.set("userName", result.user.displayName || "Usuário");
+    cookies.set("userImg", result.user.photoURL || "");
   };
 
-  const clearAuthCookies = () => {
+  const clearAuthCookies = (): void => {
     cookies.remove("auth-token");
     cookies.remove("userName");
     cookies.remove("userImg");
@@ -32,22 +32,22 @@ function AuthComponent() {
   // Funções principais
   // ---------------------------
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (): Promise<void> => {
     try {
       const result = await signInWithPopup(auth, provider);
       saveAuthCookies(result);
 
       setIsAuth(true);
-      setUserImg(result.user.photoURL);
+      setUserImg(result.user.photoURL || null);
     } catch (error) {
       console.error("Erro ao fazer login:", error);
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = (): void => {
     clearAuthCookies();
     setIsAuth(false);
-    setUserImg('');
+    setUserImg(null);
   };
 
   // ---------------------------
@@ -61,7 +61,7 @@ function AuthComponent() {
           <button onClick={handleSignOut}>
             <img className='LogOut' src={LogOut} alt="Sair" />Sair da conta
           </button>
-          <img className='UserImg' src={userImg} alt="Usuário" />
+          {userImg && <img className='UserImg' src={userImg} alt="Usuário" />}
         </div>
       ) : (
         <div className='NaoLogado'>
