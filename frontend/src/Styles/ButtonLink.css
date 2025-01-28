@@ -1,26 +1,36 @@
+:root {
+    --primary-color: #21d421;
+    --hover-color: #1cb81c;
+    --shadow-color: rgba(33, 212, 33, 0);
+    --font-size-large: 1.2rem;
+    --border-radius: 20px;
+}
+
 /* Estilo Geral do Link */
 .Link {
-    display: inline-block;
-    padding: 15px 25px;
-    font-size: 1.2rem;
-    color: white;
-    background-color: #21d421;
+    font-size: var(--font-size-large);
+    background-color: var(--primary-color);
+    border-radius: var(--border-radius);
+    width: 100px;
     border: none;
     border-radius: 20px;
     cursor: pointer;
     text-decoration: none;
-    width: 100px;
     text-align: center;
+    display: inline-block;
+    padding: 15px 25px;
+    font-size: 1.2rem;
+    color: white;
 
     /* Efeitos de Transição */
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Efeitos de Hover */
 .Link:hover {
-    background-color: #1cb81c;
+    background-color: var(--hover-color);
     animation: pulse 1s;
 }
+
 
 /* Botão Voltar */
 #BackButton {
@@ -33,9 +43,26 @@
         box-shadow: 0 0 0 0 #1cb81c;
     }
     70% {
-        box-shadow: 0 0 0 50px rgba(33, 212, 33, 0);
+        box-shadow: 0 0 0 50px var(--shadow-color);
     }
     100% {
-        box-shadow: 0 0 0 0 rgba(33, 212, 33, 0);
+        box-shadow: 0 0 0 0 var(--shadow-color);
+    }
+}
+
+.Link:focus {
+    outline: 2px dashed #1cb81c;
+    outline-offset: 4px;
+}
+
+@media (max-width: 675px) {
+    .Link {
+        padding: 10px 20px;
+        border-radius: 15px;
+        font-size: 1rem;
+        width: 90px;
+    }
+    #BackButton {
+        margin-top: 40px;
     }
 }
