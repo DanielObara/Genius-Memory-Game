@@ -22,12 +22,10 @@ type RoomData = {
 const cookies = new Cookies();
 
 const CooperativeRoom = () => {
-  // Estado do usuário autenticado e suas informações
   const [isAuth] = useState(cookies.get("auth-token"));
   const [userName] = useState(cookies.get("userName"));
   const [userImg] = useState(cookies.get("userImg"));
 
-  // Estado para a sala
   const [createRoom, setCreateRoom] = useState<string>("");
   const [playersInfos, setPlayersInfos] = useState<PlayerInfos>({ player1Img: "", player2Img: "" });
 
@@ -37,7 +35,6 @@ const CooperativeRoom = () => {
   // Funções Auxiliares
   // ---------------------------
 
-  /** Atualiza as informações dos jogadores */
   const updatePlayersInfo = (roomData: RoomData) => {
     setPlayersInfos({
       player1Img: roomData?.player1Img,
@@ -45,7 +42,6 @@ const CooperativeRoom = () => {
     });
   };
 
-  /** Redireciona para a sala após um tempo */
   const navigateToRoomAfterTimer = (unsub: Unsubscribe) => {
     setTimeout(() => {
       navigate(`/co-op/${createRoom}`);
@@ -53,7 +49,6 @@ const CooperativeRoom = () => {
     }, 1000);
   };
 
-  /** Configura o ouvinte em tempo real para as informações da sala */
   const initializeRealTimeUpdates = () => {
     const unsub = onSnapshot(doc(db, "Co-op", createRoom), (doc) => {
       const roomData = doc.data() as RoomData;
@@ -69,7 +64,6 @@ const CooperativeRoom = () => {
   // Funções principais
   // ---------------------------
 
-  /** Cria uma nova sala no banco de dados */
   const saveRoom = async () => {
     try {
       await setDoc(doc(db, "Co-op", createRoom), {
@@ -89,7 +83,6 @@ const CooperativeRoom = () => {
     }
   };
 
-  /** Tenta entrar em uma sala existente */
   const joinRoom = async () => {
     try {
       const coopRoom = doc(db, "Co-op", createRoom);
@@ -117,7 +110,6 @@ const CooperativeRoom = () => {
     }
   };
 
-  /** Atualiza o nome da sala no estado */
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCreateRoom(event.target.value);
   };
