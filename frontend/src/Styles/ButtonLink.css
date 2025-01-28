@@ -1,3 +1,4 @@
+/* Estilo Geral do Link */
 .Link {
     display: inline-block;
     padding: 15px 25px;
@@ -7,22 +8,26 @@
     border: none;
     border-radius: 20px;
     cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
     text-decoration: none;
     width: 100px;
     text-align: center;
+
+    /* Efeitos de Transição */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-
+/* Efeitos de Hover */
 .Link:hover {
     background-color: #1cb81c;
     animation: pulse 1s;
 }
 
-#BackButton{
+/* Botão Voltar */
+#BackButton {
     margin-top: 60px;
 }
 
+/* Animação de Pulso */
 @keyframes pulse {
     0% {
         box-shadow: 0 0 0 0 #1cb81c;

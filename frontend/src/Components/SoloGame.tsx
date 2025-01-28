@@ -26,18 +26,17 @@ const SoloGame = () => {
   }, [round])
 
   useEffect(() => {
-    for (let i = 0; i < gameColorChoices.length; i++) {
-      const flashButtonColors = document.querySelector<HTMLButtonElement>(`.${gameColorChoices[i]}`)!;
-
-      setTimeout(() => {
-        flashButtonColors.style.backgroundColor = 'rgb(240, 240, 240)';
-      }, i * 750);
-
-      setTimeout(() => {
-        flashButtonColors.style.backgroundColor = '';
-      }, i * 750 + 600);
-    }
-
+    gameColorChoices.forEach((color, index) => {
+      const flashButtonColors = document.querySelector<HTMLButtonElement>(`.${color}`);
+      if (flashButtonColors) {
+        setTimeout(() => {
+          flashButtonColors.style.backgroundColor = 'rgb(240, 240, 240)';
+        }, index * 750);
+        setTimeout(() => {
+          flashButtonColors.style.backgroundColor = '';
+        }, index * 750 + 600);
+      }
+    });
   }, [gameColorChoices])
 
   const Sequencia = async (corEscolhidaPeloPlayer: string) => {
