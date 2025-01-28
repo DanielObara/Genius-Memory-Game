@@ -4,7 +4,7 @@ import ButtonLink from './ButtonLink'
 import introJs from 'intro.js';
 import '../Styles/GameButton.css'
 import 'intro.js/introjs.css';
-import Auth from '../FireBase/Auth';
+import Auth from '../FireBase/AuthComponent';
 
 const Home = () => {
 

@@ -8,7 +8,7 @@ import '../Styles/Auth.css';
 
 const cookies = new Cookies();
 
-function Auth() {
+function AuthComponent() {
   const [isAuth, setIsAuth] = useState(cookies.get("auth-token"));
   const [userImg, setUserImg] = useState(cookies.get("userImg"));
 
@@ -41,7 +41,6 @@ function Auth() {
       setUserImg(result.user.photoURL);
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      
     }
   };
 
@@ -75,4 +74,4 @@ function Auth() {
   );
 }
 
-export default Auth;
+export default AuthComponent;
