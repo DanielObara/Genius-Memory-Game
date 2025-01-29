@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
-import '../Styles/HomePage.css'
-import ButtonLink from './ButtonLink'
+import './HomePage.css'
+import ButtonLink from '../ButtonLink/ButtonLink'
 import introJs from 'intro.js';
-import '../Styles/GameButton.css'
 import 'intro.js/introjs.css';
-import Auth from '../FireBase/AuthComponent';
+import Auth from '../../FireBase/AuthComponent/AuthComponent';
 
 const Home = () => {
 
@@ -44,7 +43,7 @@ const Home = () => {
 
   return (
     <div className='HomePage'>
-      <Auth></Auth>
+      <Auth/>
       <h1>Genius Game</h1>
       <div className='GameModes'>
         <ButtonLink buttontext="Solo Game" to="/sologame" id="Solo-Game" />

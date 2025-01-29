@@ -1,14 +1,8 @@
 import { useEffect, useState } from 'react'
-import ButtonLink from './ButtonLink'
-import '../Styles/BackGroundColor.css'
-import ColorButtons from './ColorButtons';
-import { useBackground } from './BackgroundContext';
-
-interface SoloGameState {
-  gameColorChoices: string[];
-  playerChoices: string[];
-  round: number;
-}
+import ButtonLink from '../ButtonLink/ButtonLink'
+import ColorButtons from '../ColorButtons/ColorButtons';
+import { useBackground } from '../BackgroundContext/BackgroundContext';
+import { SoloGameState } from './SoloGameTypes';
 
 const SoloGame = () => {
   const availableColors = ['Red', 'Yellow', 'Green', 'Blue'];
@@ -79,7 +73,6 @@ const SoloGame = () => {
       <h1>Rodada {round}</h1>
       <ColorButtons Sequencia={Sequencia}></ColorButtons>
       <ButtonLink buttontext={'Voltar'} to={'/'} id={'BackButton'}></ButtonLink>
-
     </>
   )
 }

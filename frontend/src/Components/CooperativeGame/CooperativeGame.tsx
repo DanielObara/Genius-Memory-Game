@@ -1,47 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
-import { 
-  onSnapshot, 
-  doc, 
-  updateDoc, 
-  getDoc, 
-  DocumentSnapshot, 
-  DocumentReference
-} from 'firebase/firestore';
-import { db } from '../FireBase/firebase-config';
+import { onSnapshot, doc, updateDoc, getDoc, DocumentSnapshot, DocumentReference} from 'firebase/firestore';
+import { db } from '../../FireBase/firebase-config';
 import Cookies from 'universal-cookie';
-import { ChangeTurn } from '../Utils/ChangeTurn';
-import ColorButtons from './ColorButtons';
-import '../Styles/BackGroundColor.css'
-import { useBackground } from './BackgroundContext';
+import { ChangeTurn } from '../../Utils/ChangeTurn';
+import ColorButtons from '../ColorButtons/ColorButtons';
+import { useBackground } from '../BackgroundContext/BackgroundContext';
+import { PlayersInfos, RoomParams, RoomData } from './CooperativeGameTypes';
 
 //A DocumentReference refers to a document location in a Firestore database
 //A DocumentSnapshot contains data read from a document in Firestore database
 
 const cookies = new Cookies();
-
-type RoomParams = {
-  roomname: string;
-};
-
-type RoomData = {
-  playersChoices: string[];
-  createdBy: string;
-  currentPlayer: string;
-  gameChoice: string[];
-  player1: string;
-  player1Img: string;
-  player2: string;
-  player2Img: string;
-  round: number;
-};
-
-type PlayersInfos = {
-  player1Name: string;
-  player1Img: string;
-  player2Name: string;
-  player2Img: string;
-};
 
 const AVAILABLE_COLORS: string[] = ['Red', 'Yellow', 'Green', 'Blue'];
 

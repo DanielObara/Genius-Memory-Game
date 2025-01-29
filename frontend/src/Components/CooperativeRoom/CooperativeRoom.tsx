@@ -1,9 +1,7 @@
 import { useState } from "react";
 import Cookies from "universal-cookie";
-
-import "../Styles/CooperativeRoom.css";
-import ButtonLink from "./ButtonLink";
-import RoomForm from "./RoomForm";
+import ButtonLink from "../ButtonLink/ButtonLink";
+import RoomForm from "../RoomForm/RoomForm";
 
 const cookies = new Cookies();
 

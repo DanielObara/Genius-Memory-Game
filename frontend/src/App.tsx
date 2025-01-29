@@ -1,10 +1,10 @@
 import './App.css'
-import SoloGame from './Components/SoloGame'
+import SoloGame from './Components/SoloGame/SoloGame'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import HomePage from './Components/HomePage'
-import CooperativeRoom from './Components/CooperativeRoom'
-import CooperativeGame from './Components/CooperativeGame'
-import BackgroundProvider from './Components/BackgroundContext'
+import HomePage from './Components/HomePage/HomePage'
+import CooperativeRoom from './Components/CooperativeRoom/CooperativeRoom'
+import CooperativeGame from './Components/CooperativeGame/CooperativeGame'
+import BackgroundProvider from './Components/BackgroundContext/BackgroundContext'
 
 function App() {
 

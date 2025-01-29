@@ -1,10 +1,10 @@
-import { auth, provider } from './firebase-config';
+import { auth, provider } from '../firebase-config';
 import { signInWithPopup } from "firebase/auth";
 import { useState } from 'react';
 import Cookies from "universal-cookie";
 import LogOut from '/sair.png';
 import GoogleImg from '/google.png';
-import '../Styles/Auth.css';
+import './Auth.css';
 
 const cookies = new Cookies();
 

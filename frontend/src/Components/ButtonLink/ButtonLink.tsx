@@ -1,10 +1,6 @@
 import { Link } from 'react-router-dom';
-import '../Styles/ButtonLink.css'
-interface Button {
-  buttontext: string;
-  to:string
-  id:string
-}
+import { Button } from './ButtonLinkTypes';
+import './ButtonLink.css'
 
 const ButtonLink = ({ buttontext,to ,id}: Button) => {
   return (

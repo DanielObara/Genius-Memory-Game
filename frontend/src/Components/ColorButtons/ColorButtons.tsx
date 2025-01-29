@@ -1,6 +1,6 @@
-interface Props {
-    Sequencia: (color: string) => void
-}
+import { Props } from "./ColorButtonsTypes"
+import './ColorButtons.css'
+
 const ColorButtons = ({Sequencia}: Props) => {
   return (
     <div>

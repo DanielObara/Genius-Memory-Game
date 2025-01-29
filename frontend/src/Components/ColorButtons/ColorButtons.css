@@ -1,0 +1,36 @@
+/* Ajustes gerais para os botões */
+.Buttons{
+    display: flex;
+    align-items: center;
+    justify-content: center;  
+}
+  
+/* Button styles */
+.Buttons button{
+    font-size: 15px;
+    width: 140px;
+    height: 100px;
+    margin: 5px;
+    border: 2px;
+    cursor: pointer;
+    /* Animation to button colors */
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Buttons styles */
+.Buttons .Red{
+    border-top-left-radius: 50px;
+    background-color: rgb(223, 55, 55);
+}
+.Buttons .Yellow{
+    border-top-right-radius: 50px;
+    background-color: rgb(238, 238, 34);
+}
+.Buttons .Green{
+    border-bottom-left-radius: 50px;
+    background-color: rgb(22, 185, 22);
+}
+.Buttons .Blue{
+    border-bottom-right-radius: 50px;
+    background-color: rgb(24, 165, 221);
+}

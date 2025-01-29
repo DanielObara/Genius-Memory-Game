@@ -2,19 +2,9 @@ import { doc, getDoc, onSnapshot, setDoc, Unsubscribe, updateDoc } from "firebas
 import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
-import { db } from "../FireBase/firebase-config";
-
-interface PlayerInfos {
-    player1Img: string;
-    player2Img: string;
-}
-
-type RoomData = {
-    player1: string;
-    player1Img: string;
-    player2: string;
-    player2Img: string;
-};
+import { db } from "../../FireBase/firebase-config";
+import { PlayerInfos, RoomData } from "./RoomFormTypes";
+import "./RoomForm.css";
 
 const cookies = new Cookies();
 

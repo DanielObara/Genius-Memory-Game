@@ -1,12 +1,9 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import incorrectButton from "../Sounds/error-8-206492.mp3";
-import correctButton from "../Sounds/new-notification-7-210334.mp3";
-import { PlayAudio } from '../Utils/PlayAudio';
-
-interface BackgroundContextProps {
-  flashClass: string;
-  setFlashClass: React.Dispatch<React.SetStateAction<string>>;
-}
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import incorrectButton from "../../Sounds/error-8-206492.mp3";
+import correctButton from "../../Sounds/new-notification-7-210334.mp3";
+import { PlayAudio } from '../../Utils/PlayAudio';
+import { BackgroundContextProps } from './BackgroundContextTypes';
+import './BackgroundContext.css';
 
 export const useBackground = () => {
   const context = useContext(BackgroundContext);

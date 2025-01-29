@@ -1,0 +1,22 @@
+/* Background */
+.background-container {
+    transition: background-color 0.4s ease;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+  }
+  
+  .flash-green {
+    background-color: rgba(41, 219, 41, 0.571);
+  }
+  
+  .flash-red {
+    background-color: rgba(255, 0, 0, 0.571);
+  }
+
+  .flash-pink {
+    background-color: rgba(242, 10, 122, 0.571);
+  }
+  

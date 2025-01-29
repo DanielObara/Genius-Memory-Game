@@ -1,0 +1,38 @@
+/* General GameModes Style*/
+.GameModes{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 60px;
+    margin-top: 60px;
+    
+    padding-top: 20px;
+    padding-bottom: 20px;
+    
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in 0.1s forwards;
+}
+/* Margin to HomePage */
+.HomePage{
+    margin-top: 90px;
+}
+/* Adjustment in the gif in tutorial*/
+.gif{
+    width: 200px;
+    height: auto;
+    margin-top: 20px;
+}
+
+/* Button animation on GameModes falling*/
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
