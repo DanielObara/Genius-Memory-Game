@@ -5,6 +5,8 @@ import Cookies from "universal-cookie";
 import { db } from "../../FireBase/firebase-config";
 import { PlayerInfos, RoomData } from "./RoomFormTypes";
 import "./RoomForm.css";
+import ErrorHandler from "../Errors/ErrorHandler";
+import { ErrorHandlerProps } from "../Errors/ErrorHandlerTypes";
 
 const cookies = new Cookies();
 
@@ -14,6 +16,7 @@ const RoomForm = () => {
 
     const [createRoom, setCreateRoom] = useState<string>("");
     const [playersInfos, setPlayersInfos] = useState<PlayerInfos>({ player1Img: "", player2Img: "" });
+    const [error, setError] = useState<ErrorHandlerProps | null>(null);
 
     const navigate = useNavigate();
 
@@ -38,7 +41,7 @@ const RoomForm = () => {
     const initializeRealTimeUpdates = () => {
         try {
             if (!createRoom.trim()) {
-                alert("Nome da sala não pode estar vazio.");
+                setError({ message: "O nome da sala não pode estar vazio.", severity: 'warning' });
                 return;
             }
 
@@ -48,7 +51,7 @@ const RoomForm = () => {
                     try {
                         const roomData = doc.data() as RoomData;
                         if (!roomData) {
-                            console.warn("Tentando acessar uma sala inexistente:", createRoom);
+                            setError({ message: "A Sala não existe", severity: 'warning' });
                             return;
                         }
                         updatePlayersInfo(roomData);
@@ -62,12 +65,12 @@ const RoomForm = () => {
                 },
                 (error) => {
                     console.error("Erro ao escutar as atualizações da sala:", error);
-                    alert("Erro ao sincronizar os dados da sala. Por favor, tente novamente.");
+                    setError({ message: "Erro ao sincronizar os dados da sala. Por favor, tente novamente.", severity: 'error' });
                 }
             );
         } catch (error) {
             console.error("Erro inesperado ao inicializar atualizações em tempo real:", error);
-            alert("Erro inesperado ao conectar à sala. Tente novamente mais tarde.");
+            setError({ message: "Erro inesperado ao conectar à sala. Tente novamente mais tarde.", severity: 'error' });
         }
     };
 
@@ -78,7 +81,7 @@ const RoomForm = () => {
     const saveRoom = async () => {
         try {
             if (!createRoom.trim()) {
-                alert("Nome da sala não pode estar vazio.");
+                setError({ message: "O nome da sala não pode estar vazio.", severity: 'warning' });
                 return;
             }
 
@@ -96,15 +99,14 @@ const RoomForm = () => {
             console.log(`Sala "${createRoom}" criada com sucesso.`);
             initializeRealTimeUpdates();
         } catch (error) {
-            console.error("Erro ao criar a sala:", error);
-            alert("Erro ao criar a sala. Tente novamente.");
+            setError({ message: "Erro ao criar a sala", severity: 'error' });
         }
     };
 
     const joinRoom = async () => {
         try {
             if (!createRoom.trim()) {
-                alert("Nome da sala não pode estar vazio.");
+                setError({ message: "O nome da sala não pode estar vazio.", severity: 'warning' });
                 return;
             }
 
@@ -112,7 +114,7 @@ const RoomForm = () => {
             const roomSnap = await getDoc(coopRoom);
 
             if (!roomSnap.exists()) {
-                alert("Sala não encontrada.");
+                setError({ message: "Sala não encontrada.", severity: 'warning' });
                 return;
             }
 
@@ -127,11 +129,11 @@ const RoomForm = () => {
                 console.log(`${userName} entrou na sala "${createRoom}".`);
                 initializeRealTimeUpdates();
             } else {
-                alert("Sala cheia.");
+                setError({ message: "Sala cheia", severity: 'error' });       
             }
         } catch (error) {
             console.error("Erro ao entrar na sala:", error);
-            alert("Erro ao entrar na sala. Tente novamente.");
+            setError({ message: "Erro ao entrar na sala. Tente novamente", severity: 'error' });   
         }
     };
 
@@ -145,6 +147,7 @@ const RoomForm = () => {
 
     return (
         <div>
+            {error && <ErrorHandler message={error.message} severity={error.severity}  />}
             <div className="CreateDiv">
                 <input type="text" onChange={handleChange} placeholder="Nome da sala" />
                 <button onClick={saveRoom}>Criar sala</button>
