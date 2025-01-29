@@ -1,3 +1,4 @@
+/* Estilo Geral do GameModes */
 .GameModes{
     display: flex;
     flex-direction: column;
@@ -13,14 +14,18 @@
     opacity: 0;
     animation: fadeIn 0.5s ease-in 0.1s forwards;
 }
+/* Margin para a HomePage */
 .HomePage{
     margin-top: 90px;
 }
+/* Ajuste no gif do tutorial*/
 .gif{
     width: 200px;
     height: auto;
     margin-top: 20px;
 }
+
+/* Animação dos botões do GameModes caindo*/
 @keyframes fadeIn {
     0% {
         opacity: 0;

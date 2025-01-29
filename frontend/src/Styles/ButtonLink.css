@@ -1,3 +1,4 @@
+/* Variables */
 :root {
     --primary-color: #21d421;
     --hover-color: #1cb81c;
@@ -19,7 +20,7 @@
     text-align: center;
     display: inline-block;
     padding: 15px 25px;
-    font-size: 1.2rem;
+    font-size: var(--font-size-large);
     color: white;
 
     /* Efeitos de Transição */
@@ -40,7 +41,7 @@
 /* Animação de Pulso */
 @keyframes pulse {
     0% {
-        box-shadow: 0 0 0 0 #1cb81c;
+        box-shadow: 0 0 0 0 var(--hover-color);
     }
     70% {
         box-shadow: 0 0 0 50px var(--shadow-color);
@@ -51,7 +52,7 @@
 }
 
 .Link:focus {
-    outline: 2px dashed #1cb81c;
+    outline: 2px dashed var(--hover-color);
     outline-offset: 4px;
 }
 
