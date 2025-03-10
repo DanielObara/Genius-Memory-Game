@@ -53,13 +53,12 @@ export const update = async (req: Request, res: Response) => {
     if (updatedUser.rankPoints >= findRank.requiredPoints) {
       const newRank = await Rank.findOne({ rank: findRank?.nextRank });
 
-      if (updatedUser.rankPoints <= findRank.requiredPoints + 300) {
+      if (updatedUser.rankPoints <= findRank.requiredPoints) {
         await updatedUser.updateOne({ rank: newRank?._id });
       } else {
-
-        console.error(RANK_MESSAGES.ERROR_UPDATING_RANK);
         updatedUser.set({ rankPoints: oldRankPoints?.rankPoints });
         await updatedUser.save();
+        throw new Error(RANK_MESSAGES.ERROR_UPDATING_RANK);
       }
     }
     return res.json({ message: USER_MESSAGES.USER_UPDATED_SUCCESSFULLY, user: updatedUser });
